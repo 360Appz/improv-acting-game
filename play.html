@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="Play rapid-fire questions and multi-choice quiz about Improvisation & Acting for Everyday Life.">
+<title>PLAY — Improv Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* PLAY PAGE */
+.play-tabs {
+  display: flex; gap: 0;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--card-border);
+  padding: 0 32px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.play-tabs::-webkit-scrollbar { display: none; }
+.play-tab {
+  padding: 16px 24px; cursor: pointer;
+  font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text2); border-bottom: 3px solid transparent;
+  transition: all 0.2s; white-space: nowrap;
+  background: none; border-top: none; border-left: none; border-right: none;
+}
+.play-tab:hover { color: var(--a1); }
+.play-tab.active { color: var(--a1); border-bottom-color: var(--a1); }
+
+.play-panel { display: none; padding: 60px 32px; max-width: 900px; margin: 0 auto; }
+.play-panel.visible { display: block; animation: panelIn 0.35s cubic-bezier(0.16,1,0.3,1); }
+@keyframes panelIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+/* RAPID FIRE */
+#rf-container { max-width: 760px; margin: 0 auto; }
+.rf-header {
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+.rf-timer-ring {
+  width: 76px; height: 76px; border-radius: 50%;
+  background: conic-gradient(var(--a1) 100%, var(--card-border) 0%);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; flex-shrink: 0;
+  transition: background 0.1s;
+}
+.rf-timer-ring::before {
+  content: ''; position: absolute;
+  width: 58px; height: 58px; border-radius: 50%;
+  background: var(--card-bg); z-index: 1;
+}
+#rf-time-display {
+  position: relative; z-index: 2;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem; color: var(--text);
+}
+.rf-meta { flex: 1; }
+.rf-progress-label {
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;
+  color: var(--text3); margin-bottom: 6px;
+}
+.rf-progress-bar { height: 6px; background: var(--card-border); border-radius: 3px; overflow: hidden; }
+.rf-progress-fill {
+  height: 100%; background: linear-gradient(90deg, var(--a1), var(--a2));
+  border-radius: 3px; transition: width 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.rf-stack { position: relative; min-height: 280px; margin-bottom: 24px; }
+.rf-card {
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  border-radius: 32px;
+  padding: 44px 40px;
+  text-align: center;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.1);
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  min-height: 280px;
+}
+.rf-card.tilt-hover { transform: perspective(800px) rotateY(2deg) rotateX(-2deg) scale(1.01); }
+.rf-cat {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 14px; border-radius: 9999px;
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.rf-q { font-family: 'Bricolage Grotesque', sans-serif; font-size: clamp(18px,3vw,26px); font-weight: 800; line-height: 1.3; margin-bottom: 16px; }
+.rf-type { font-size: 0.75rem; color: var(--text3); font-weight: 500; }
+.rf-answer {
+  width: 100%; padding: 14px 18px;
+  background: var(--bg2); border: 1.5px solid var(--card-border);
+  border-radius: 14px; margin-top: 14px;
+  text-align: left; font-size: 0.9rem; color: var(--text2); line-height: 1.6;
+  display: none; animation: fadeInUp 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.rf-answer.visible { display: block; }
+@keyframes fadeInUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+.rf-controls { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
+.rf-btn {
+  padding: 12px 28px; border-radius: 9999px;
+  font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;
+  border: 2px solid var(--card-border); background: var(--card-bg); color: var(--text);
+  cursor: pointer; transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+.rf-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+.rf-btn.reveal { border-color: var(--a3); color: var(--a3); }
+.rf-btn.reveal:hover { background: var(--a3); color: white; }
+.rf-btn.skip { border-color: var(--a5); color: var(--a5); }
+.rf-btn.skip:hover { background: var(--a5); color: white; }
+.rf-btn.got-it { border-color: var(--a4); color: var(--a4); }
+.rf-btn.got-it:hover { background: var(--a4); color: white; }
+.rf-btn.next-q { background: var(--a1); border-color: var(--a1); color: white; }
+.rf-btn.next-q:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 8px 24px var(--g1); }
+
+.rf-score-bar {
+  display: flex; gap: 12px; align-items: center;
+  padding: 12px 20px; background: var(--card-bg);
+  border: 1.5px solid var(--card-border); border-radius: 9999px;
+  margin-bottom: 20px; flex-wrap: wrap;
+}
+.rf-score-item { font-size: 0.75rem; font-weight: 700; color: var(--text2); }
+.rf-score-item span { color: var(--a2); font-size: 0.9rem; }
+.rf-done {
+  text-align: center; padding: 60px 32px;
+  animation: fadeInUp 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+.rf-done h2 { font-family:'Bebas Neue',sans-serif; font-size: clamp(48px,8vw,80px); color: var(--a1); margin-bottom: 16px; }
+.rf-done-stats { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin: 24px 0; }
+.rf-done-stat { text-align: center; }
+.rf-done-stat .num { font-family:'Bebas Neue',sans-serif; font-size: 3rem; color: var(--a2); }
+.rf-done-stat .lbl { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text3); }
+
+/* QUIZ */
+#quiz-container { max-width: 760px; margin: 0 auto; }
+.quiz-header {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+.quiz-q-count {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem; color: var(--text2); letter-spacing: 2px; flex: 1;
+}
+.quiz-score {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--card-bg); border: 1.5px solid var(--card-border);
+  padding: 8px 16px; border-radius: 9999px;
+}
+.quiz-score-num { font-family:'Bebas Neue',sans-serif; font-size: 1.4rem; color: var(--a2); }
+.quiz-score-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); }
+
+.quiz-card {
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  border-radius: 28px; padding: 44px 40px;
+  margin-bottom: 20px;
+  box-shadow: 0 16px 60px rgba(0,0,0,0.08);
+}
+.quiz-q-text {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: clamp(18px, 2.5vw, 24px); font-weight: 800;
+  line-height: 1.4; margin-bottom: 28px;
+}
+.quiz-options { display: flex; flex-direction: column; gap: 10px; }
+.quiz-explanation {
+  margin-top: 20px; padding: 16px 20px;
+  background: var(--bg2); border-radius: 14px;
+  font-size: 0.9rem; color: var(--text2); line-height: 1.6;
+  border-left: 4px solid var(--a4);
+  display: none; animation: fadeInUp 0.3s ease;
+}
+.quiz-explanation.visible { display: block; }
+.quiz-next-row { display: flex; justify-content: flex-end; margin-top: 16px; }
+
+.quiz-done {
+  text-align: center; padding: 60px 32px;
+  animation: fadeInUp 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+.quiz-done h2 { font-family:'Bebas Neue',sans-serif; font-size: clamp(48px,8vw,80px); margin-bottom: 12px; }
+.quiz-result-bar {
+  width: 100%; max-width: 400px; margin: 24px auto;
+  background: var(--card-border); border-radius: 6px; height: 12px; overflow: hidden;
+}
+.quiz-result-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--a1), var(--a2));
+  border-radius: 6px;
+  transition: width 1s cubic-bezier(0.34,1.56,0.64,1);
+}
+.quiz-grade {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(28px,5vw,56px); color: var(--a1);
+  margin-bottom: 8px;
+}
+.quiz-breakdown { display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; margin: 20px 0; }
+.qb-item { text-align: center; }
+.qb-num { font-family:'Bebas Neue',sans-serif; font-size: 2.5rem; line-height: 1; }
+.qb-lbl { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text3); }
+
+/* FILTER BAR */
+.filter-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; }
+.filter-btn {
+  padding: 6px 14px; border-radius: 9999px;
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+  border: 1.5px solid var(--card-border); background: var(--card-bg); color: var(--text2);
+  cursor: pointer; transition: all 0.2s;
+}
+.filter-btn:hover, .filter-btn.active { background: var(--a1); border-color: var(--a1); color: white; }
+
+/* CATEGORY LEGEND */
+.cat-dot {
+  display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+  margin-right: 4px;
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-dot"></div>
+<canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+<nav role="navigation" aria-label="Main navigation">
+  <a href="index.html" class="nav-logo">IMPROV⚡QUEST</a>
+  <div class="nav-links">
+    <a href="index.html"   class="nav-link">Home</a>
+    <a href="explore.html" class="nav-link">Explore</a>
+    <a href="play.html"    class="nav-link active" aria-current="page">Play</a>
+    <a href="daily.html"   class="nav-link">Daily</a>
+  </div>
+  <div class="nav-controls">
+    <button id="sound-toggle" class="nav-icon-btn" title="Toggle sound" aria-label="Toggle sound">🔊</button>
+    <button id="dark-toggle"  class="nav-icon-btn" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
+  </div>
+</nav>
+
+<div id="xp-bar-container" role="status">
+  <span class="xp-label">Level <span id="xp-level">1</span></span>
+  <div id="xp-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"><div id="xp-fill"></div></div>
+  <div class="xp-stats">
+    <span class="xp-stat">XP <span id="xp-total">0</span></span>
+    <span class="xp-stat">🔥 <span id="xp-streak">0</span></span>
+  </div>
+</div>
+
+<div id="achievement-pop" role="alert" aria-live="polite"></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<main class="page-body">
+
+<!-- TABS -->
+<div class="play-tabs" role="tablist" aria-label="Game modes">
+  <button class="play-tab active" role="tab" aria-selected="true"  id="tab-rf"   aria-controls="panel-rf"   onclick="showTab('rf')">⚡ Rapid Fire</button>
+  <button class="play-tab"        role="tab" aria-selected="false" id="tab-quiz" aria-controls="panel-quiz" onclick="showTab('quiz')">🎯 Quiz</button>
+</div>
+
+<!-- ═══════════════════ RAPID FIRE PANEL ═══════════════════ -->
+<div id="panel-rf" class="play-panel visible" role="tabpanel" aria-labelledby="tab-rf">
+  <div id="rf-container">
+
+    <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,8vw,88px);color:var(--a1);margin-bottom:8px;">RAPID FIRE</h1>
+    <p class="text-muted" style="font-size:1rem;line-height:1.6;margin-bottom:32px;">
+      25 questions. Reveal the answer, then decide: got it or skip. Earn XP for each session.
+      Questions are <strong>shuffled every hour</strong> for a fresh experience.
+    </p>
+
+    <!-- Score bar -->
+    <div class="rf-score-bar" role="status" aria-live="polite">
+      <span class="rf-score-item">Card <span id="rf-cur">1</span>/<span id="rf-tot">25</span></span>
+      <span class="rf-score-item">✅ Got It <span id="rf-gotit">0</span></span>
+      <span class="rf-score-item">⏭ Skipped <span id="rf-skip">0</span></span>
+      <span class="rf-score-item">🎯 Score <span id="rf-pct">—</span></span>
+    </div>
+
+    <!-- Progress -->
+    <div style="margin-bottom:24px;">
+      <div class="rf-progress-label">Progress</div>
+      <div class="rf-progress-bar"><div class="rf-progress-fill" id="rf-prog-fill" style="width:0%"></div></div>
+    </div>
+
+    <!-- Timer + card -->
+    <div class="rf-header">
+      <div class="rf-timer-ring" id="rf-timer-ring" role="timer" aria-label="Session timer">
+        <div id="rf-time-display">—</div>
+      </div>
+      <div class="rf-meta">
+        <div id="rf-category-display" class="badge badge-blue">Loading...</div>
+        <div style="font-size:0.8rem;color:var(--text3);margin-top:6px;" id="rf-type-display">Type: —</div>
+      </div>
+      <button class="btn btn-xs btn-ghost" id="rf-restart-btn" style="flex-shrink:0;">↺ New Shuffle</button>
+    </div>
+
+    <!-- Card stack -->
+    <div class="rf-stack" id="rf-stack">
+      <div class="rf-card" id="rf-active-card">
+        <div class="rf-cat badge-blue" id="rf-cat-badge">Basics</div>
+        <div class="rf-q" id="rf-question">Loading...</div>
+        <div class="rf-type" id="rf-qtype">—</div>
+        <div class="rf-answer" id="rf-answer">—</div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="rf-controls" id="rf-controls">
+      <button class="rf-btn reveal" id="rf-reveal-btn" onclick="rfReveal()">👁️ Reveal Answer</button>
+      <button class="rf-btn skip"   id="rf-skip-btn"   onclick="rfSkip()" style="display:none">⏭ Skip</button>
+      <button class="rf-btn got-it" id="rf-gotit-btn"  onclick="rfGotIt()" style="display:none">✅ Got It</button>
+      <button class="rf-btn next-q" id="rf-next-btn"   onclick="rfNext()" style="display:none">Next →</button>
+    </div>
+
+    <!-- Category filter -->
+    <div style="margin-top:36px;">
+      <p class="section-label" style="margin-bottom:12px;">Filter by Category</p>
+      <div class="filter-bar" id="rf-filter-bar">
+        <button class="filter-btn active" onclick="rfSetCategory('all')">All</button>
+      </div>
+    </div>
+
+  </div><!-- /rf-container -->
+</div>
+
+<!-- ═══════════════════ QUIZ PANEL ════════════════════════ -->
+<div id="panel-quiz" class="play-panel" role="tabpanel" aria-labelledby="tab-quiz">
+  <div id="quiz-container">
+
+    <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,8vw,88px);color:var(--a3);margin-bottom:8px;">QUIZ</h1>
+    <p class="text-muted" style="font-size:1rem;line-height:1.6;margin-bottom:32px;">
+      15 multiple-choice questions testing your understanding of improv and acting theory.
+      Questions are <strong>shuffled every hour</strong>.
+    </p>
+
+    <div id="quiz-start-screen">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:32px;">
+        <div class="stat-card"><div class="stat-num">15</div><div class="stat-label">Questions</div></div>
+        <div class="stat-card"><div class="stat-num">25</div><div class="stat-label">XP per correct</div></div>
+        <div class="stat-card"><div class="stat-num" id="quiz-best-score">—</div><div class="stat-label">Best Score</div></div>
+        <div class="stat-card"><div class="stat-num" id="quiz-plays">0</div><div class="stat-label">Plays</div></div>
+      </div>
+      <button class="btn btn-primary" onclick="startQuiz()" style="font-size:1.1rem;padding:18px 48px;">
+        ⚡ Start Quiz
+      </button>
+    </div>
+
+    <div id="quiz-game-screen" style="display:none;">
+      <div class="quiz-header">
+        <div class="quiz-q-count" id="quiz-q-count">Question 1 / 15</div>
+        <div class="quiz-score">
+          <span class="quiz-score-num" id="quiz-score-display">0</span>
+          <span class="quiz-score-label">Score</span>
+        </div>
+        <div style="flex:1;max-width:200px;">
+          <div class="rf-progress-bar"><div class="rf-progress-fill" id="quiz-prog-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <div id="quiz-card" class="quiz-card">
+        <div class="quiz-q-text" id="quiz-q-text">Loading...</div>
+        <div class="quiz-options" id="quiz-options"></div>
+        <div class="quiz-explanation" id="quiz-explanation"></div>
+        <div class="quiz-next-row" id="quiz-next-row" style="display:none;">
+          <button class="btn btn-primary btn-sm" onclick="quizNext()">Next Question →</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="quiz-done-screen" style="display:none;" class="quiz-done">
+      <div style="font-size:5rem;margin-bottom:16px;" id="quiz-done-emoji">🎯</div>
+      <h2 id="quiz-done-title">Quiz Complete!</h2>
+      <div class="quiz-grade" id="quiz-grade-text"></div>
+      <div class="quiz-result-bar"><div class="quiz-result-fill" id="quiz-result-fill"></div></div>
+      <div class="quiz-breakdown">
+        <div class="qb-item"><div class="qb-num text-gradient" id="qd-correct">0</div><div class="qb-lbl">Correct</div></div>
+        <div class="qb-item"><div class="qb-num" style="color:var(--a1);" id="qd-wrong">0</div><div class="qb-lbl">Wrong</div></div>
+        <div class="qb-item"><div class="qb-num" style="color:var(--a2);" id="qd-pct">0%</div><div class="qb-lbl">Score</div></div>
+        <div class="qb-item"><div class="qb-num" style="color:var(--a4);" id="qd-xp">0</div><div class="qb-lbl">XP Earned</div></div>
+      </div>
+      <p style="color:var(--text2);font-size:0.95rem;line-height:1.6;max-width:480px;margin:0 auto 28px;" id="quiz-feedback-msg"></p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="startQuiz()">↺ Play Again</button>
+        <a href="explore.html" class="btn btn-secondary">📖 Review Content</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <p><strong>IMPROV QUEST</strong> — Play Mode · Earn XP, unlock achievements, test your knowledge</p>
+</footer>
+
+<script src="js/content.js"></script>
+<script src="js/engine.js"></script>
+<script>
+/* ── TAB SWITCH ─────────────────────────────────────────────── */
+function showTab(id) {
+  document.querySelectorAll('.play-panel').forEach(p => p.classList.remove('visible'));
+  document.querySelectorAll('.play-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+  document.getElementById('panel-' + id).classList.add('visible');
+  const tab = document.getElementById('tab-' + id);
+  tab.classList.add('active'); tab.setAttribute('aria-selected','true');
+  Engine.Sound.pop();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RAPID FIRE ENGINE
+══════════════════════════════════════════════════════════════ */
+let rfState = {
+  deck: [], cur: 0, gotIt: 0, skip: 0,
+  revealed: false, timerStart: null, timerInterval: null,
+  category: 'all'
+};
+
+const CAT_COLORS = {
+  'Basics':        'badge-blue',
+  'Conflict':      'badge-red',
+  'Status':        'badge-purple',
+  'Conversations': 'badge-green',
+  'Listening':     'badge-green',
+  'Confidence':    'badge-yellow',
+  'Mindset':       'badge-blue',
+  'Yes-And':       'badge-green',
+  'Presence':      'badge-blue',
+  'Practice':      'badge-purple',
+  'Empathy':       'badge-pink',
+  'Work':          'badge-yellow',
+  'Types':         'badge-purple',
+  'Speaking':      'badge-red',
+  'Identity':      'badge-pink',
+  'Warnings':      'badge-red',
+  'Tools':         'badge-blue'
+};
+
+function rfBuildDeck() {
+  const seed = Engine.getHourSeed();
+  let qs = rfState.category === 'all' ? [...C.rapidFireQuestions] : C.rapidFireQuestions.filter(q => q.category === rfState.category);
+  rfState.deck = Engine.shuffle(qs, seed);
+  rfState.cur = 0; rfState.gotIt = 0; rfState.skip = 0;
+  rfUpdateUI();
+}
+
+function rfUpdateUI() {
+  const total = rfState.deck.length;
+  const cur   = rfState.cur;
+
+  document.getElementById('rf-cur').textContent  = cur + 1;
+  document.getElementById('rf-tot').textContent  = total;
+  document.getElementById('rf-gotit').textContent = rfState.gotIt;
+  document.getElementById('rf-skip').textContent  = rfState.skip;
+  document.getElementById('rf-prog-fill').style.width = (cur / total * 100) + '%';
+
+  if (cur < total) {
+    const q = rfState.deck[cur];
+    document.getElementById('rf-question').textContent = q.q;
+    document.getElementById('rf-answer').textContent   = q.a;
+    document.getElementById('rf-answer').classList.remove('visible');
+    document.getElementById('rf-qtype').textContent    = 'Type: ' + q.type;
+
+    // Category badge
+    const badge = document.getElementById('rf-cat-badge');
+    badge.textContent = q.category;
+    badge.className   = 'rf-cat ' + (CAT_COLORS[q.category] || 'badge-blue');
+    document.getElementById('rf-category-display').textContent = q.category;
+    document.getElementById('rf-category-display').className   = 'badge ' + (CAT_COLORS[q.category] || 'badge-blue');
+    document.getElementById('rf-type-display').textContent = 'Type: ' + q.type.toUpperCase();
+
+    rfState.revealed = false;
+    document.getElementById('rf-reveal-btn').style.display = '';
+    document.getElementById('rf-skip-btn').style.display   = 'none';
+    document.getElementById('rf-gotit-btn').style.display  = 'none';
+    document.getElementById('rf-next-btn').style.display   = 'none';
+
+    // Animate card in
+    const card = document.getElementById('rf-active-card');
+    card.style.animation = 'none';
+    card.offsetHeight; // reflow
+    card.style.animation = 'cardEnter 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards';
+  }
+
+  const done = cur >= total;
+  document.getElementById('rf-controls').style.display = done ? 'none' : '';
+  document.getElementById('rf-stack').style.display    = done ? 'none' : '';
+
+  if (done) rfShowDone();
+}
+
+function rfReveal() {
+  if (rfState.revealed) return;
+  rfState.revealed = true;
+  document.getElementById('rf-answer').classList.add('visible');
+  document.getElementById('rf-reveal-btn').style.display = 'none';
+  document.getElementById('rf-skip-btn').style.display   = '';
+  document.getElementById('rf-gotit-btn').style.display  = '';
+  Engine.Sound.reveal();
+}
+
+function rfGotIt() {
+  rfState.gotIt++;
+  rfAnimateCard('exit-right');
+  Engine.Sound.success();
+  Engine.xp.add(Engine.XP_CONFIG.rapidFireDone, 'Rapid fire: got it');
+  setTimeout(rfAdvance, 420);
+}
+
+function rfSkip() {
+  rfState.skip++;
+  rfAnimateCard('exit-left');
+  Engine.Sound.swipe();
+  setTimeout(rfAdvance, 420);
+}
+
+function rfNext() {
+  rfAnimateCard('exit-up');
+  Engine.Sound.swipe();
+  setTimeout(rfAdvance, 370);
+}
+
+function rfAdvance() {
+  rfState.cur++;
+  rfUpdateUI();
+}
+
+function rfAnimateCard(cls) {
+  const card = document.getElementById('rf-active-card');
+  card.classList.add(cls);
+  setTimeout(() => card.classList.remove(cls), 500);
+}
+
+function rfShowDone() {
+  const total = rfState.deck.length;
+  const pct   = Math.round(rfState.gotIt / total * 100);
+  document.getElementById('rf-pct').textContent = pct + '%';
+
+  const doneHTML = `
+    <div class="rf-done">
+      <div style="font-size:5rem;margin-bottom:16px;">${pct >= 80 ? '🏆' : pct >= 50 ? '💪' : '🎯'}</div>
+      <h2>Session Complete!</h2>
+      <div class="rf-done-stats">
+        <div class="rf-done-stat"><div class="num">${rfState.gotIt}</div><div class="lbl">Got It</div></div>
+        <div class="rf-done-stat"><div class="num">${rfState.skip}</div><div class="lbl">Skipped</div></div>
+        <div class="rf-done-stat"><div class="num">${pct}%</div><div class="lbl">Score</div></div>
+      </div>
+      <p style="color:var(--text2);font-size:1rem;max-width:400px;margin:0 auto 24px;line-height:1.6;">
+        ${pct >= 80 ? 'Excellent! You really know this material.' : pct >= 50 ? 'Good work! Keep practicing for mastery.' : 'Keep going! Each rep builds the skill.'}
+      </p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="rfBuildDeck()">↺ New Shuffle</button>
+        <a href="explore.html" class="btn btn-secondary">📖 Review Content</a>
+      </div>
+    </div>`;
+
+  const container = document.getElementById('rf-container');
+  const existing = container.querySelector('.rf-done');
+  if (existing) existing.remove();
+  container.insertAdjacentHTML('beforeend', doneHTML);
+
+  Engine.achievements.unlock('rapid_fire');
+  Engine.Sound.success();
+}
+
+function rfSetCategory(cat) {
+  rfState.category = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.textContent === (cat === 'all' ? 'All' : cat)));
+  rfBuildDeck();
+}
+
+// ── RF Timer ──────────────────────────────────────────────────
+function rfStartTimer() {
+  rfState.timerStart = Date.now();
+  const ring = document.getElementById('rf-timer-ring');
+  const disp = document.getElementById('rf-time-display');
+  rfState.timerInterval = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - rfState.timerStart) / 1000);
+    const m = String(Math.floor(elapsed / 60)).padStart(2,'0');
+    const s = String(elapsed % 60).padStart(2,'0');
+    disp.textContent = m + ':' + s;
+    const pct = Math.min(elapsed / 600 * 100, 100);
+    ring.style.background = `conic-gradient(var(--a1) ${pct}%, var(--card-border) 0%)`;
+  }, 1000);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   QUIZ ENGINE
+══════════════════════════════════════════════════════════════ */
+let qzState = { deck: [], cur: 0, correct: 0, answered: false, xpEarned: 0 };
+
+function startQuiz() {
+  const seed = Engine.getHourSeed() + 1;
+  qzState.deck     = Engine.shuffle([...C.quizQuestions], seed);
+  qzState.cur      = 0;
+  qzState.correct  = 0;
+  qzState.answered = false;
+  qzState.xpEarned = 0;
+
+  document.getElementById('quiz-start-screen').style.display = 'none';
+  document.getElementById('quiz-done-screen').style.display  = 'none';
+  document.getElementById('quiz-game-screen').style.display  = '';
+
+  // Track plays
+  const plays = (parseInt(localStorage.getItem('iq_quiz_plays') || '0')) + 1;
+  localStorage.setItem('iq_quiz_plays', plays);
+  document.getElementById('quiz-plays').textContent = plays;
+
+  qzRenderQ();
+}
+
+function qzRenderQ() {
+  const total = qzState.deck.length;
+  const cur   = qzState.cur;
+  if (cur >= total) { qzDone(); return; }
+
+  const q = qzState.deck[cur];
+  qzState.answered = false;
+
+  document.getElementById('quiz-q-count').textContent    = `Question ${cur+1} / ${total}`;
+  document.getElementById('quiz-q-text').textContent     = q.q;
+  document.getElementById('quiz-score-display').textContent = qzState.correct;
+  document.getElementById('quiz-prog-fill').style.width  = (cur / total * 100) + '%';
+  document.getElementById('quiz-explanation').classList.remove('visible');
+  document.getElementById('quiz-explanation').textContent = '';
+  document.getElementById('quiz-next-row').style.display = 'none';
+
+  const optWrap = document.getElementById('quiz-options');
+  optWrap.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'q-option';
+    btn.setAttribute('aria-label', `Option ${letters[i]}: ${opt}`);
+    btn.innerHTML = `<span class="q-option-letter">${letters[i]}</span>${opt}`;
+    btn.addEventListener('click', () => qzAnswer(i, q));
+    optWrap.appendChild(btn);
+  });
+
+  // Animate
+  const card = document.getElementById('quiz-card');
+  card.style.animation = 'none'; card.offsetHeight;
+  card.style.animation = 'cardEnter 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards';
+}
+
+function qzAnswer(selected, q) {
+  if (qzState.answered) return;
+  qzState.answered = true;
+
+  const opts = document.querySelectorAll('.q-option');
+  opts.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.correct) btn.classList.add('correct');
+    else if (i === selected) btn.classList.add('wrong');
+  });
+
+  const isCorrect = selected === q.correct;
+  if (isCorrect) {
+    qzState.correct++;
+    qzState.xpEarned += Engine.XP_CONFIG.quizCorrect;
+    Engine.Sound.success();
+  } else {
+    Engine.Sound.wrong();
+  }
+
+  Engine.progress.addQuizResult(isCorrect);
+  document.getElementById('quiz-score-display').textContent = qzState.correct;
+
+  const exp = document.getElementById('quiz-explanation');
+  exp.textContent    = (isCorrect ? '✅ Correct! ' : '✗ Not quite. ') + q.explanation;
+  exp.style.borderLeftColor = isCorrect ? 'var(--a4)' : 'var(--a1)';
+  exp.classList.add('visible');
+  document.getElementById('quiz-next-row').style.display = '';
+}
+
+function quizNext() {
+  qzState.cur++;
+  qzRenderQ();
+  Engine.Sound.pop();
+}
+
+function qzDone() {
+  document.getElementById('quiz-game-screen').style.display = 'none';
+  document.getElementById('quiz-done-screen').style.display = '';
+
+  const total   = qzState.deck.length;
+  const correct = qzState.correct;
+  const pct     = Math.round(correct / total * 100);
+  const grade   = pct >= 90 ? 'S TIER 🏆' : pct >= 75 ? 'A TIER 💎' : pct >= 60 ? 'B TIER ⚡' : pct >= 45 ? 'C TIER 💪' : 'Keep Grinding 🔥';
+  const emoji   = pct >= 90 ? '🏆' : pct >= 75 ? '💎' : pct >= 60 ? '⚡' : '🔥';
+  const msg     = pct >= 90 ? 'Incredible! You\'ve truly internalized this material. Improv master level.' :
+                  pct >= 75 ? 'Strong work! You have a solid understanding of improv and acting principles.' :
+                  pct >= 60 ? 'Good foundation. A few more review sessions and you\'ll have this down.' :
+                  pct >= 45 ? 'Getting there. Use the Explore page to review the sections you missed.' :
+                  'This material is worth a deep dive. Head to Explore to read the full content.';
+
+  document.getElementById('quiz-done-emoji').textContent   = emoji;
+  document.getElementById('quiz-done-title').textContent   = 'Quiz Complete!';
+  document.getElementById('quiz-grade-text').textContent   = grade;
+  document.getElementById('qd-correct').textContent        = correct;
+  document.getElementById('qd-wrong').textContent          = total - correct;
+  document.getElementById('qd-pct').textContent            = pct + '%';
+  document.getElementById('qd-xp').textContent             = qzState.xpEarned;
+  document.getElementById('quiz-feedback-msg').textContent = msg;
+
+  setTimeout(() => {
+    document.getElementById('quiz-result-fill').style.width = pct + '%';
+  }, 200);
+
+  // Best score
+  const best = parseInt(localStorage.getItem('iq_quiz_best') || '0');
+  if (pct > best) {
+    localStorage.setItem('iq_quiz_best', pct);
+    document.getElementById('quiz-best-score').textContent = pct + '%';
+  }
+
+  Engine.xp.add(qzState.xpEarned, 'Quiz complete');
+  if (pct === 100) Engine.achievements.unlock('perfectionist');
+  Engine.Sound.levelUp();
+}
+
+/* ── INIT ─────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  Engine.init();
+
+  // Load best score
+  const best  = localStorage.getItem('iq_quiz_best');
+  const plays = localStorage.getItem('iq_quiz_plays');
+  if (best)  document.getElementById('quiz-best-score').textContent = best + '%';
+  if (plays) document.getElementById('quiz-plays').textContent = plays;
+
+  // Build RF category filter
+  const cats = [...new Set(C.rapidFireQuestions.map(q => q.category))].sort();
+  const bar  = document.getElementById('rf-filter-bar');
+  cats.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    btn.textContent = cat;
+    btn.onclick = () => rfSetCategory(cat);
+    bar.appendChild(btn);
+  });
+
+  // Init RF deck & timer
+  rfBuildDeck();
+  rfStartTimer();
+
+  // Restart button
+  document.getElementById('rf-restart-btn').addEventListener('click', () => {
+    rfBuildDeck();
+    rfStartTimer();
+    Engine.Sound.pop();
+  });
+});
+</script>
+</body>
+</html>

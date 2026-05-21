@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="Improvisation & Acting for Everyday Life — A gamified adventure through presence, listening, adaptability, and social mastery.">
+<meta name="theme-color" content="#ff4d1c">
+<title>IMPROV QUEST — The Life Skills Adventure</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+/* INDEX-SPECIFIC OVERRIDES */
+.hero { background: var(--bg); }
+
+/* FLOATING HERO BADGES */
+.float-badges { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.fb { position: absolute; font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; padding: 10px 16px; border-radius: 9999px; backdrop-filter: blur(12px); border: 1.5px solid rgba(255,255,255,0.2); }
+.fb1  { top: 18%; left: 5%;   background: rgba(255,77,28,0.15); color: var(--a1); animation: badgeFloat 6s ease-in-out infinite; }
+.fb2  { top: 25%; right: 6%;  background: rgba(0,87,255,0.12); color: var(--a3); animation: badgeFloat 7s ease-in-out infinite 1s; }
+.fb3  { top: 55%; left: 3%;   background: rgba(0,200,150,0.12); color: var(--a4); animation: badgeFloat 8s ease-in-out infinite 0.5s; }
+.fb4  { top: 65%; right: 5%;  background: rgba(139,92,246,0.12); color: var(--a6); animation: badgeFloat 6.5s ease-in-out infinite 2s; }
+.fb5  { top: 80%; left: 12%;  background: rgba(255,45,139,0.12); color: var(--a5); animation: badgeFloat 7.5s ease-in-out infinite 0.3s; }
+.fb6  { top: 12%; right: 15%; background: rgba(255,214,10,0.2);  color: #a07800;  animation: badgeFloat 9s ease-in-out infinite 1.5s; }
+[data-theme="dark"] .fb6 { color: var(--a2); }
+
+/* MANIFESTO BAR */
+.manifesto-bar {
+  background: var(--a1);
+  overflow: hidden; white-space: nowrap;
+  padding: 14px 0;
+  position: relative; z-index: 2;
+}
+.manifesto-track {
+  display: inline-flex; gap: 0; will-change: transform;
+  animation: marquee 28s linear infinite;
+}
+.manifesto-bar:hover .manifesto-track { animation-play-state: paused; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.manifesto-item {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem; letter-spacing: 3px; color: white;
+  padding: 0 40px; display: inline-flex; align-items: center; gap: 24px;
+  white-space: nowrap;
+}
+.manifesto-item::after { content: '★'; opacity: 0.6; }
+
+/* CORE ANSWER SECTION */
+.core-answer {
+  position: relative; overflow: hidden;
+  background: linear-gradient(135deg, var(--bg), var(--bg2));
+  border-top: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+}
+.core-answer-inner {
+  max-width: 960px; margin: 0 auto;
+  padding: 80px 32px; text-align: center;
+}
+.core-insight {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(28px, 5vw, 64px);
+  line-height: 1.1; letter-spacing: 1px;
+  margin: 24px 0;
+}
+.core-insight .word1 { color: var(--a1); }
+.core-insight .word2 { color: var(--a3); }
+.core-insight .word3 { color: var(--a5); }
+
+/* SKILL CARDS CAROUSEL */
+.skill-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px; border-radius: 9999px;
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* SKILL CARD FULL */
+.skill-full-card {
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  border-radius: 28px;
+  padding: 44px 40px;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  width: 100%;
+}
+.skill-full-card:hover {
+  border-color: var(--a1);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.12);
+}
+.skill-icon-big {
+  font-size: 3.5rem; margin-bottom: 20px;
+  display: inline-block; animation: iconFloat 4s ease-in-out infinite;
+}
+@keyframes iconFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.skill-num-tag {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 6rem; position: absolute; top: 20px; right: 24px;
+  opacity: 0.05; line-height: 1; pointer-events: none;
+}
+
+/* PARALLAX POSTER */
+.poster-section {
+  position: relative; overflow: hidden;
+  padding: 100px 32px;
+  background: var(--text);
+  color: white;
+}
+.poster-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, #1a0a00, #0d0030, #001a00);
+  opacity: 0.95;
+}
+.poster-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,77,28,0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,77,28,0.1) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridDrift 20s linear infinite;
+}
+@keyframes gridDrift { from { transform: translateY(0); } to { transform: translateY(60px); } }
+.poster-content {
+  position: relative; z-index: 2;
+  max-width: 960px; margin: 0 auto; text-align: center;
+}
+.poster-eyebrow {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 4px;
+  text-transform: uppercase; color: var(--a1); margin-bottom: 16px;
+}
+.poster-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(48px, 9vw, 120px);
+  line-height: 0.95; margin-bottom: 24px;
+  color: white;
+}
+.poster-title span { color: var(--a2); }
+.poster-body {
+  font-size: clamp(15px, 2vw, 20px);
+  color: rgba(255,255,255,0.75); line-height: 1.6;
+  max-width: 700px; margin: 0 auto 36px;
+}
+
+/* PRINCIPLES STRIP */
+.principles-strip {
+  background: var(--bg2);
+  border-top: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+  padding: 60px 32px;
+  position: relative; z-index: 2;
+  overflow: hidden;
+}
+.principles-row {
+  display: flex; gap: 20px; flex-wrap: nowrap;
+  overflow-x: auto; padding-bottom: 8px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.principles-row::-webkit-scrollbar { display: none; }
+.principle-card {
+  flex: 0 0 220px; scroll-snap-align: start;
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 20px;
+  padding: 24px 20px;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  cursor: default;
+}
+.principle-card:hover { transform: translateY(-8px); box-shadow: 0 20px 60px rgba(0,0,0,0.1); border-color: var(--a1); }
+.principle-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3rem; color: var(--a1); line-height: 1;
+  margin-bottom: 8px;
+}
+.principle-icon { font-size: 1.5rem; margin-bottom: 10px; }
+.principle-title { font-weight: 800; font-size: 0.9rem; margin-bottom: 6px; color: var(--text); }
+.principle-body { font-size: 0.8rem; color: var(--text2); line-height: 1.5; }
+
+/* HUB GRID CUSTOM */
+.hub-card-1 { background: linear-gradient(135deg, #ff4d1c 0%, #ff2d8b 100%); }
+.hub-card-2 { background: linear-gradient(135deg, #0057ff 0%, #8b5cf6 100%); }
+.hub-card-3 { background: linear-gradient(135deg, #00c896 0%, #0057ff 100%); }
+.hub-card-4 { background: linear-gradient(135deg, #ffd60a 0%, #ff7d3c 100%); }
+
+/* SCROLL-HINT */
+.scroll-hint {
+  position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--text2); animation: hintBounce 2s ease infinite;
+  z-index: 3;
+}
+@keyframes hintBounce {
+  0%, 100% { opacity: 0.5; transform: translateX(-50%) translateY(0); }
+  50% { opacity: 1; transform: translateX(-50%) translateY(5px); }
+}
+.scroll-arrow { font-size: 1.3rem; }
+
+/* EVIDENCE SECTION */
+.evidence-pills { display: flex; flex-wrap: wrap; gap: 10px; }
+.evi-pill {
+  padding: 10px 18px; border-radius: 9999px;
+  font-size: 0.8rem; font-weight: 600;
+  border: 1.5px solid var(--card-border);
+  background: var(--card-bg); color: var(--text2);
+  display: flex; align-items: center; gap: 8px;
+  transition: all 0.2s;
+}
+.evi-pill:hover { border-color: var(--a3); color: var(--a3); background: rgba(0,87,255,0.05); }
+.evi-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-dot"></div>
+
+<!-- PARTICLES -->
+<canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+<!-- NAV -->
+<nav role="navigation" aria-label="Main navigation">
+  <a href="index.html" class="nav-logo" aria-label="Improv Quest home">IMPROV⚡QUEST</a>
+  <div class="nav-links">
+    <a href="index.html"   class="nav-link active" aria-current="page">Home</a>
+    <a href="explore.html" class="nav-link">Explore</a>
+    <a href="play.html"    class="nav-link">Play</a>
+    <a href="daily.html"   class="nav-link">Daily</a>
+  </div>
+  <div class="nav-controls">
+    <button id="sound-toggle" class="nav-icon-btn" title="Toggle sound" aria-label="Toggle sound">🔊</button>
+    <button id="dark-toggle"  class="nav-icon-btn" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
+  </div>
+</nav>
+
+<!-- XP BAR -->
+<div id="xp-bar-container" role="status" aria-label="Progress tracker">
+  <span class="xp-label">Level <span id="xp-level">1</span></span>
+  <div id="xp-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+    <div id="xp-fill"></div>
+  </div>
+  <div class="xp-stats">
+    <span class="xp-stat">XP <span id="xp-total">0</span></span>
+    <span class="xp-stat">🔥 <span id="xp-streak">0</span></span>
+  </div>
+</div>
+
+<!-- ACHIEVEMENT POP -->
+<div id="achievement-pop" role="alert" aria-live="polite"></div>
+
+<!-- TOAST -->
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- HERO                                                        -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<main class="page-body">
+<section class="hero" aria-label="Hero">
+  <div class="blob" style="width:500px;height:500px;background:var(--a1);top:-100px;left:-100px;" aria-hidden="true"></div>
+  <div class="blob" style="width:400px;height:400px;background:var(--a3);bottom:-50px;right:-80px;animation-delay:4s;" aria-hidden="true"></div>
+  <div class="blob" style="width:300px;height:300px;background:var(--a5);top:30%;right:10%;animation-delay:2s;" aria-hidden="true"></div>
+
+  <div class="hero-bg-text" aria-hidden="true">IMPROV</div>
+
+  <!-- Floating badges -->
+  <div class="float-badges" aria-hidden="true">
+    <div class="fb fb1">🎭 PRESENCE</div>
+    <div class="fb fb2">👂 LISTENING</div>
+    <div class="fb fb3">⚡ CONFIDENCE</div>
+    <div class="fb fb4">🌀 ADAPTABILITY</div>
+    <div class="fb fb5">🎯 OBJECTIVES</div>
+    <div class="fb fb6">✅ YES, AND</div>
+  </div>
+
+  <div class="hero-eyebrow" data-reveal>
+    🎭 A Comprehensive, Critical, Practical Playbook
+  </div>
+  <h1 class="hero-title glitch" data-reveal data-reveal-delay="1">
+    IMPROV<br>&amp; ACTING<br>FOR LIFE
+  </h1>
+  <p class="hero-sub" data-reveal data-reveal-delay="2">
+    <strong>Acting trains truthful expression. Improvisation trains adaptive response.</strong>
+    Everyday life requires both. This is your gamified adventure through the skills that matter.
+  </p>
+  <div class="hero-cta" data-reveal data-reveal-delay="3">
+    <a href="explore.html" class="btn btn-primary">🗺️ Start Exploring</a>
+    <a href="play.html"    class="btn btn-secondary">⚡ Play &amp; Quiz</a>
+    <a href="daily.html"   class="btn btn-ghost">🌅 Today's Challenge</a>
+  </div>
+
+  <div class="scroll-hint" aria-hidden="true">
+    scroll to discover
+    <span class="scroll-arrow">↓</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- MANIFESTO MARQUEE                                           -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="manifesto-bar" aria-hidden="true">
+  <div class="manifesto-track" id="marquee-track">
+    <!-- JS fills this -->
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- CORE ANSWER                                                 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="core-answer" aria-labelledby="core-heading">
+  <div class="core-answer-inner">
+    <div class="section-label" data-reveal>The Core Answer</div>
+    <h2 id="core-heading" class="section-title" data-reveal data-reveal-delay="1">
+      Life is mostly <em>unscripted</em>
+    </h2>
+    <p class="hero-sub" data-reveal data-reveal-delay="2" id="core-answer-text">
+      Improvisation and acting are not just "stage skills." They are <strong>life skills for uncertainty, communication, confidence, empathy, emotional control, creativity, and social presence.</strong>
+    </p>
+    <div class="core-insight" data-reveal data-reveal-delay="3">
+      <span class="word1">Acting</span> trains truthful expression.
+      <span class="word2">Improvisation</span> trains adaptive response.
+      <span class="word3">Life</span> requires both.
+    </div>
+    <p class="text-muted" style="font-size:0.9rem;max-width:720px;margin:16px auto 0;line-height:1.7;" data-reveal data-reveal-delay="4">
+      The evidence is promising but not magical: studies and reviews suggest improv and drama training can improve communication, empathy, tolerance of uncertainty, teamwork, and socio-emotional skills — but many studies are small, context-specific, or educational rather than clinical. The strongest claim: <em>regular, well-guided practice gives you repeated reps in exactly the social-emotional situations most people avoid.</em>
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- UNSCRIPTED MOMENTS                                          -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section" aria-labelledby="unscripted-heading">
+  <div class="section-label" data-reveal>Section 1</div>
+  <h2 id="unscripted-heading" class="section-title" data-reveal data-reveal-delay="1">Most People Try<br>to Script <em>Real Life</em></h2>
+  <p class="text-muted" style="max-width:640px;font-size:1rem;line-height:1.7;margin-bottom:40px;" data-reveal data-reveal-delay="2">
+    A boss changes direction. A date becomes awkward. A client objects. A friend gets offended. A family member says something emotional. A presentation gets interrupted. A plan collapses.
+    <strong style="color:var(--a1);">Improvisation teaches you to respond. Acting teaches you to express.</strong>
+  </p>
+
+  <!-- Unscripted fears carousel -->
+  <div style="margin-bottom:48px;" data-reveal data-reveal-delay="3">
+    <p class="section-label">The "What If" Scripts People Run</p>
+    <div class="carousel-wrap" id="fears-carousel">
+      <div class="carousel-track" id="fears-track" style="min-height:120px;">
+        <!-- JS builds -->
+      </div>
+      <div class="carousel-nav">
+        <button class="carousel-prev" aria-label="Previous">←</button>
+        <span class="carousel-counter">1 / 6</span>
+        <button class="carousel-next" aria-label="Next">→</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Person type table carousel -->
+  <div data-reveal data-reveal-delay="4">
+    <p class="section-label">Who Needs What</p>
+    <div class="carousel-wrap" id="types-carousel">
+      <div class="carousel-track" id="types-track" style="min-height:160px;"></div>
+      <div class="carousel-nav">
+        <button class="carousel-prev" aria-label="Previous">←</button>
+        <span class="carousel-counter">1 / 6</span>
+        <button class="carousel-next" aria-label="Next">→</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SKILLS CAROUSEL                                             -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section" aria-labelledby="skills-heading">
+  <div class="section-label" data-reveal>Section 2</div>
+  <h2 id="skills-heading" class="section-title" data-reveal data-reveal-delay="1">6 Core Skills<br>Improv <em>Develops</em></h2>
+
+  <div class="carousel-wrap" id="skills-carousel" data-reveal data-reveal-delay="2">
+    <div class="carousel-track" id="skills-track" style="height:560px;"></div>
+    <div class="carousel-nav">
+      <button class="carousel-prev" aria-label="Previous skill">←</button>
+      <span class="carousel-counter">1 / 6</span>
+      <button class="carousel-next" aria-label="Next skill">→</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- PRINCIPLES STRIP                                            -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="principles-strip" data-reveal>
+  <div style="max-width:1400px;margin:0 auto;">
+    <div class="section-label">Section 18 — 7 Core Principles</div>
+    <h2 class="section-title" style="font-size:clamp(32px,5vw,64px);margin-bottom:32px;">The Rules of the <em>Game</em></h2>
+    <div class="principles-row" id="principles-row" role="list" aria-label="Core principles">
+      <!-- JS fills -->
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- POSTER — BOTTOM LINE                                        -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="poster-section" aria-labelledby="poster-heading">
+  <div class="poster-bg" aria-hidden="true"></div>
+  <div class="poster-grid" aria-hidden="true" data-parallax="0.12"></div>
+  <div class="poster-content">
+    <div class="poster-eyebrow">Section 20 — The Bottom Line</div>
+    <h2 id="poster-heading" class="poster-title">THE<br><span>TRUTH</span><br>ABOUT IMPROV</h2>
+    <p class="poster-body" id="bottom-line-text"></p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+      <a href="explore.html" class="btn btn-primary">Read Everything →</a>
+      <a href="play.html"    class="btn btn-secondary" style="border-color:rgba(255,255,255,0.3);color:white;">Test Yourself ⚡</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- NAVIGATE THE QUEST (Hub)                                    -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section" aria-labelledby="hub-heading">
+  <div class="section-label" data-reveal>Navigate the Quest</div>
+  <h2 id="hub-heading" class="section-title" data-reveal data-reveal-delay="1">Choose Your <em>Adventure</em></h2>
+  <p class="text-muted" style="font-size:1rem;line-height:1.6;max-width:560px;margin-bottom:40px;" data-reveal data-reveal-delay="2">
+    Four zones. One mission: to become more present, adaptable, empathetic, confident, and expressive.
+  </p>
+
+  <div class="hub-grid" data-reveal data-reveal-delay="3">
+    <a href="explore.html" class="hub-card hub-card-1" data-tilt aria-label="Explore the full content">
+      <span class="hub-card-icon" aria-hidden="true">🗺️</span>
+      <h2>EXPLORE</h2>
+      <p>All 20 sections of the Improv & Acting playbook — skills, tools, scenarios, exercises, and more.</p>
+      <span class="hub-card-arrow" aria-hidden="true">→</span>
+    </a>
+    <a href="play.html" class="hub-card hub-card-2" data-tilt aria-label="Play quiz games">
+      <span class="hub-card-icon" aria-hidden="true">⚡</span>
+      <h2>PLAY</h2>
+      <p>Rapid-fire question deck + multi-choice quiz. Test your knowledge, earn XP, unlock achievements.</p>
+      <span class="hub-card-arrow" aria-hidden="true">→</span>
+    </a>
+    <a href="daily.html" class="hub-card hub-card-3" data-tilt aria-label="Daily challenge">
+      <span class="hub-card-icon" aria-hidden="true">🌅</span>
+      <h2>DAILY</h2>
+      <p>Today's quote, question of the day, and daily challenge. Refreshed every day. Keep your streak alive.</p>
+      <span class="hub-card-arrow" aria-hidden="true">→</span>
+    </a>
+    <a href="explore.html#drills" class="hub-card hub-card-4" data-tilt aria-label="Drills and exercises">
+      <span class="hub-card-icon" aria-hidden="true">🎯</span>
+      <h2>DRILLS</h2>
+      <p>Solo exercises, partner exercises, the 30-day plan, and the complete weekly template.</p>
+      <span class="hub-card-arrow" aria-hidden="true">→</span>
+    </a>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- EVIDENCE                                                    -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section" aria-labelledby="evidence-heading" style="padding-top:0;">
+  <div class="section-divider"></div>
+  <div class="section-label" data-reveal>Section 17 — Evidence Map</div>
+  <h2 id="evidence-heading" class="section-title" data-reveal data-reveal-delay="1">What the <em>Research</em> Says</h2>
+  <div class="evidence-pills" data-reveal data-reveal-delay="2" role="list">
+    <div class="evi-pill" role="listitem">
+      <span class="evi-dot" style="background:var(--a4);"></span>
+      Communication &amp; Teamwork — Medical improv training: promising, especially for listening &amp; empathy
+    </div>
+    <div class="evi-pill" role="listitem">
+      <span class="evi-dot" style="background:var(--a3);"></span>
+      Tolerance of Uncertainty — Adolescent improv: reduced social anxiety &amp; intolerance of uncertainty
+    </div>
+    <div class="evi-pill" role="listitem">
+      <span class="evi-dot" style="background:var(--a5);"></span>
+      Empathy &amp; Theory of Mind — Drama training: improvements in perspective-taking &amp; collaborative behavior
+    </div>
+    <div class="evi-pill" role="listitem">
+      <span class="evi-dot" style="background:var(--a2);"></span>
+      Professional Training — 2025 review: positive effects in health, management &amp; teacher training
+    </div>
+  </div>
+  <p class="text-muted" style="font-size:0.85rem;margin-top:16px;line-height:1.6;max-width:680px;" data-reveal data-reveal-delay="3">
+    Info current as of May 21, 2026. Evidence for applied improv and acting is promising, especially in education, communication training, empathy, and uncertainty tolerance, but the field still has uneven study quality and should not be exaggerated into a cure-all.
+  </p>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- FOOTER                                                      -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<footer>
+  <p><strong>IMPROV QUEST</strong> — Improvisation &amp; Acting for Everyday Life · A Comprehensive, Critical, Practical Playbook</p>
+  <p style="margin-top:6px;">Life is mostly unscripted. <strong>Respond, don't just react.</strong></p>
+</footer>
+</main>
+
+<!-- SCRIPTS -->
+<script src="js/content.js"></script>
+<script src="js/engine.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  Engine.init();
+
+  // ── MARQUEE ──────────────────────────────────────────────
+  const track = document.getElementById('marquee-track');
+  const mantras = [
+    'RECEIVE BEFORE RESPONDING','BUILD DON\'T BLOCK','MAKE OFFERS',
+    'RECOVER QUICKLY','READ OBJECTIVES','MATCH EXPRESSION TO INTENTION',
+    'STAY TRUTHFUL','YES AND','ACCEPT REALITY FAST',
+    'CHANGE IS SURVIVABLE','LISTEN TO WHAT IS GIVEN',
+    'PRACTICE SURVIVING AWKWARDNESS','LIFE IS MOSTLY UNSCRIPTED',
+    'CONFIDENCE FOLLOWS REPS','SILENCE IS NOT FAILURE'
+  ];
+  const doubled = [...mantras, ...mantras];
+  doubled.forEach(t => {
+    const el = document.createElement('span');
+    el.className = 'manifesto-item';
+    el.textContent = t;
+    track.appendChild(el);
+  });
+
+  // ── BOTTOM LINE ──────────────────────────────────────────
+  document.getElementById('bottom-line-text').textContent = C.bottomLine;
+
+  // ── FEARS CAROUSEL ────────────────────────────────────────
+  const fearsTrack = document.getElementById('fears-track');
+  C.section1.scripts.forEach(s => {
+    const slide = document.createElement('div');
+    slide.innerHTML = `
+      <div class="card" style="text-align:center;padding:40px;max-width:700px;margin:0 auto;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(24px,4vw,48px);color:var(--a1);line-height:1.2;">${s}</div>
+        <p class="text-muted" style="margin-top:16px;font-size:0.9rem;">The unscripted moment most people fear</p>
+      </div>`;
+    fearsTrack.appendChild(slide);
+  });
+  Engine.initCarousel(document.getElementById('fears-carousel'));
+
+  // ── TYPES CAROUSEL ────────────────────────────────────────
+  const typesTrack = document.getElementById('types-track');
+  C.section1.table.forEach(row => {
+    const slide = document.createElement('div');
+    slide.innerHTML = `
+      <div class="card" style="max-width:700px;margin:0 auto;padding:36px 32px;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--a1);margin-bottom:12px;">${row.person}</div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:160px;background:rgba(0,200,150,0.08);border:1.5px solid rgba(0,200,150,0.2);border-radius:12px;padding:16px;">
+            <div style="font-size:0.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--a4);margin-bottom:6px;">Strength</div>
+            <div style="font-weight:600;font-size:0.95rem;color:var(--text);">${row.strength}</div>
+          </div>
+          <div style="flex:1;min-width:160px;background:rgba(255,77,28,0.06);border:1.5px solid rgba(255,77,28,0.2);border-radius:12px;padding:16px;">
+            <div style="font-size:0.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--a1);margin-bottom:6px;">Weakness</div>
+            <div style="font-weight:600;font-size:0.95rem;color:var(--text);">${row.weakness}</div>
+          </div>
+        </div>
+        <p class="text-muted" style="margin-top:14px;font-size:0.82rem;">${C.section1.goal}</p>
+      </div>`;
+    typesTrack.appendChild(slide);
+  });
+  Engine.initCarousel(document.getElementById('types-carousel'));
+
+  // ── SKILLS CAROUSEL ────────────────────────────────────────
+  const skillsTrack = document.getElementById('skills-track');
+  const colorMap = { red:'a1', blue:'a3', green:'a4', yellow:'a2', pink:'a5', orange:'a7', purple:'a6' };
+
+  C.skills.forEach(skill => {
+    const cv = colorMap[skill.color] || 'a1';
+    const slide = document.createElement('div');
+    slide.innerHTML = `
+      <div class="skill-full-card card--${skill.color}" style="max-width:800px;margin:0 auto;position:relative;height:500px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;">
+        <div class="card-accent-line"></div>
+        <div class="skill-num-tag">${skill.num}</div>
+        <div class="skill-icon-big">${skill.icon}</div>
+        <div class="badge badge-${skill.color}" style="margin-bottom:12px;">${skill.num} — ${skill.title}</div>
+        <h3 style="font-size:clamp(22px,3vw,36px);margin-bottom:16px;">${skill.title}</h3>
+        <p style="font-size:0.95rem;line-height:1.7;color:var(--text2);margin-bottom:20px;">${skill.body}</p>
+        ${skill.keyPrinciple ? `<blockquote>${skill.keyPrinciple}</blockquote>` : ''}
+        ${skill.lifeProblems ? `
+        <p style="font-size:0.8rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--${cv});margin-bottom:10px;">In everyday life, this looks like:</p>
+        <div class="pill-list">${skill.lifeProblems.map(p => `<span class="pill-item">${p}</span>`).join('')}</div>
+        ` : ''}
+        ${skill.drill ? `
+        <div class="drill-box" style="margin-top:24px;">
+          <h4>${skill.drill.title}</h4>
+          <p>${skill.drill.body}</p>
+          ${skill.drill.steps ? `<ul style="margin-top:8px;">${skill.drill.steps.map(s => `<li>${s}</li>`).join('')}</ul>` : ''}
+          ${skill.drill.example ? `
+            <div style="margin-top:12px;font-size:0.85rem;color:var(--text2);">
+              <p><strong>A:</strong> ${skill.drill.example.personA}</p>
+              <p style="color:var(--a1);"><strong>Weak:</strong> ${skill.drill.example.weak}</p>
+              <p style="color:var(--a4);"><strong>Better:</strong> ${skill.drill.example.better}</p>
+            </div>` : ''}
+          ${skill.drill.note ? `<p style="margin-top:10px;font-style:italic;font-size:0.85rem;">${skill.drill.note}</p>` : ''}
+        </div>` : ''}
+        ${skill.uses ? `
+        <div style="margin-top:20px;">
+          <p style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text3);margin-bottom:8px;">Everyday Uses</p>
+          <div class="pill-list">${skill.uses.map(u => `<span class="pill-item">${u}</span>`).join('')}</div>
+        </div>` : ''}
+      </div>`;
+    skillsTrack.appendChild(slide);
+  });
+  Engine.initCarousel(document.getElementById('skills-carousel'));
+
+  // ── PRINCIPLES ────────────────────────────────────────────
+  const prow = document.getElementById('principles-row');
+  C.principles.forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'principle-card';
+    el.setAttribute('role', 'listitem');
+    el.innerHTML = `
+      <div class="principle-num">${p.num}</div>
+      <div class="principle-icon">${p.icon}</div>
+      <div class="principle-title">${p.title}</div>
+      <div class="principle-body">${p.body}</div>`;
+    el.addEventListener('click', () => {
+      Engine.Sound.pop();
+      Engine.progress.markRead('principle-' + p.num);
+    });
+    prow.appendChild(el);
+  });
+
+  // ── HOVER SOUNDS ─────────────────────────────────────────
+  document.querySelectorAll('.hub-card').forEach(el => {
+    el.addEventListener('mouseenter', () => Engine.Sound.hover());
+  });
+  document.querySelectorAll('.principle-card').forEach(el => {
+    el.addEventListener('mouseenter', () => Engine.Sound.hover());
+  });
+
+  // ── REVEAL ────────────────────────────────────────────────
+  Engine.init();
+  setTimeout(() => {
+    document.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('revealed'));
+  }, 100);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,3017 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMPROV QUEST — The Life Skills Adventure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=Bricolage+Grotesque:wght@400;600;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f0e8;
+  --bg2: #fffdf6;
+  --text: #1a1208;
+  --text2: #4a3f28;
+  --accent1: #ff4d1c;
+  --accent2: #ffd60a;
+  --accent3: #0057ff;
+  --accent4: #00c896;
+  --accent5: #ff2d8b;
+  --accent6: #8b5cf6;
+  --card-bg: #fff9ee;
+  --card-border: #e8d9b8;
+  --shadow: rgba(0,0,0,0.15);
+  --glow1: rgba(255,77,28,0.4);
+  --glow2: rgba(255,214,10,0.5);
+  --glow3: rgba(0,87,255,0.3);
+}
+[data-theme="dark"] {
+  --bg: #0d0b07;
+  --bg2: #1a1510;
+  --text: #f5ead4;
+  --text2: #b8a885;
+  --accent1: #ff6340;
+  --accent2: #ffd60a;
+  --accent3: #4d90ff;
+  --accent4: #00e5a8;
+  --accent5: #ff5fa3;
+  --accent6: #a78bfa;
+  --card-bg: #1e1a12;
+  --card-border: #3a3020;
+  --shadow: rgba(0,0,0,0.5);
+  --glow1: rgba(255,99,64,0.5);
+  --glow2: rgba(255,214,10,0.4);
+  --glow3: rgba(77,144,255,0.4);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; overflow-x: hidden; }
+
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.4s, color 0.4s;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* CUSTOM CURSOR */
+#cursor {
+  width: 20px; height: 20px;
+  border: 2.5px solid var(--accent1);
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 99999;
+  transform: translate(-50%,-50%);
+  transition: all 0.08s ease;
+  mix-blend-mode: multiply;
+}
+[data-theme="dark"] #cursor { mix-blend-mode: screen; }
+#cursor-dot {
+  width: 6px; height: 6px;
+  background: var(--accent1);
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 99999;
+  transform: translate(-50%,-50%);
+}
+#cursor.hovering { transform: translate(-50%,-50%) scale(2.5); background: rgba(255,77,28,0.1); }
+
+/* PARTICLES */
+#particle-canvas {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 0; opacity: 0.4;
+}
+
+/* NOISE OVERLAY */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none; opacity: 0.5;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent1); border-radius: 3px; }
+
+/* FLOATING SHAPES */
+.float-shape {
+  position: absolute; border-radius: 50%;
+  pointer-events: none; opacity: 0.07;
+  animation: floatShape 8s ease-in-out infinite;
+}
+@keyframes floatShape {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-30px) rotate(180deg); }
+}
+
+/* NAVIGATION */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  padding: 16px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  backdrop-filter: blur(20px);
+  background: rgba(245,240,232,0.85);
+  border-bottom: 1px solid var(--card-border);
+  transition: background 0.4s;
+}
+[data-theme="dark"] nav { background: rgba(13,11,7,0.9); }
+.nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem; letter-spacing: 3px;
+  background: linear-gradient(135deg, var(--accent1), var(--accent2), var(--accent5));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  text-shadow: none;
+  animation: logoShimmer 3s ease infinite;
+}
+@keyframes logoShimmer {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.3); }
+}
+.nav-links { display: flex; gap: 8px; align-items: center; }
+.nav-link {
+  font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 1px; padding: 8px 14px;
+  border-radius: 100px; cursor: pointer;
+  transition: all 0.2s; color: var(--text2); text-decoration: none;
+  border: 1px solid transparent;
+}
+.nav-link:hover {
+  background: var(--accent1); color: white;
+  border-color: var(--accent1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px var(--glow1);
+}
+#dark-toggle {
+  width: 44px; height: 26px;
+  background: var(--card-border); border-radius: 13px;
+  border: none; cursor: pointer; position: relative;
+  transition: background 0.3s;
+}
+[data-theme="dark"] #dark-toggle { background: var(--accent3); }
+#dark-toggle::after {
+  content: '☀️';
+  position: absolute; top: 3px; left: 4px;
+  width: 20px; height: 20px; border-radius: 50%;
+  font-size: 12px; line-height: 20px;
+  transition: all 0.3s;
+  display: flex; align-items: center; justify-content: center;
+}
+[data-theme="dark"] #dark-toggle::after { content: '🌙'; left: 20px; }
+
+/* XP BAR */
+#xp-bar-container {
+  position: fixed; top: 65px; left: 0; right: 0; z-index: 999;
+  padding: 6px 32px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--card-border);
+  display: flex; align-items: center; gap: 16px;
+  transition: background 0.4s;
+}
+.xp-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--accent1); white-space: nowrap; }
+#xp-track { flex: 1; height: 8px; background: var(--card-border); border-radius: 4px; overflow: hidden; }
+#xp-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent5));
+  border-radius: 4px; transition: width 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative; overflow: hidden;
+}
+#xp-fill::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: xpShine 2s linear infinite;
+}
+@keyframes xpShine { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+.xp-stats { display: flex; gap: 16px; }
+.xp-stat { font-size: 0.7rem; font-weight: 600; color: var(--text2); }
+.xp-stat span { color: var(--accent2); font-size: 0.8rem; }
+#achievement-pop {
+  position: fixed; top: 110px; right: 24px; z-index: 1100;
+  background: var(--accent2); color: #1a1208;
+  padding: 12px 20px; border-radius: 12px;
+  font-weight: 700; font-size: 0.85rem;
+  transform: translateX(200%); transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: 0 8px 30px var(--glow2);
+}
+#achievement-pop.show { transform: translateX(0); }
+
+/* HERO */
+#hero {
+  min-height: 100vh; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; text-align: center;
+  padding: 120px 32px 80px;
+  overflow: hidden; z-index: 2;
+}
+.hero-bg-text {
+  position: absolute; font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(80px, 18vw, 280px);
+  color: transparent; -webkit-text-stroke: 1px rgba(255,77,28,0.08);
+  letter-spacing: -5px; white-space: nowrap;
+  top: 50%; transform: translateY(-50%);
+  user-select: none; pointer-events: none;
+  animation: heroBgDrift 20s ease-in-out infinite;
+}
+@keyframes heroBgDrift { 0%, 100% { transform: translateY(-50%) translateX(0); } 50% { transform: translateY(-52%) translateX(-20px); } }
+.hero-tag {
+  display: inline-block; padding: 6px 18px;
+  background: var(--accent1); color: white;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+  border-radius: 100px; margin-bottom: 24px;
+  animation: tagBounce 2s ease infinite;
+}
+@keyframes tagBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(60px, 12vw, 180px);
+  line-height: 0.9; letter-spacing: -2px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--accent1) 0%, var(--accent2) 40%, var(--accent5) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 40px var(--glow1));
+  animation: titleGlow 4s ease-in-out infinite;
+}
+@keyframes titleGlow {
+  0%, 100% { filter: drop-shadow(0 0 40px var(--glow1)); }
+  50% { filter: drop-shadow(0 0 80px var(--glow1)) drop-shadow(0 0 120px var(--glow2)); }
+}
+.hero-sub {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: clamp(16px, 3vw, 26px); font-weight: 400;
+  color: var(--text2); max-width: 700px; line-height: 1.5;
+  margin-bottom: 40px;
+}
+.hero-sub strong { color: var(--accent1); font-weight: 800; }
+.hero-cta-group { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+.btn {
+  padding: 16px 36px; border-radius: 100px;
+  font-weight: 700; font-size: 1rem; letter-spacing: 1px;
+  border: none; cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative; overflow: hidden;
+  text-transform: uppercase;
+}
+.btn::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+  opacity: 0; transition: opacity 0.2s;
+}
+.btn:hover::before { opacity: 1; }
+.btn-primary { background: var(--accent1); color: white; box-shadow: 0 4px 20px var(--glow1); }
+.btn-primary:hover { transform: translateY(-4px) scale(1.04); box-shadow: 0 12px 40px var(--glow1); }
+.btn-secondary {
+  background: transparent; color: var(--text);
+  border: 2px solid var(--card-border);
+}
+.btn-secondary:hover { border-color: var(--accent2); color: var(--accent2); transform: translateY(-4px); box-shadow: 0 12px 40px var(--glow2); }
+.hero-scroll-hint {
+  position: absolute; bottom: 32px;
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--text2);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  animation: scrollHint 2s ease infinite;
+}
+@keyframes scrollHint { 0%, 100% { opacity: 0.5; transform: translateY(0); } 50% { opacity: 1; transform: translateY(6px); } }
+.hero-scroll-hint::after { content: '↓'; font-size: 1.5rem; }
+
+/* FLOATING BADGES */
+.float-badge {
+  position: absolute; padding: 10px 16px; border-radius: 100px;
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;
+  backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);
+  animation: badgeFloat 6s ease-in-out infinite;
+  cursor: pointer; transition: transform 0.2s;
+  z-index: 5;
+}
+.float-badge:hover { transform: scale(1.1) !important; }
+@keyframes badgeFloat {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-12px) rotate(2deg); }
+}
+
+/* SECTIONS */
+.section {
+  position: relative; z-index: 2;
+  padding: 100px 32px;
+  max-width: 1400px; margin: 0 auto;
+}
+.section-label {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 4px;
+  text-transform: uppercase; color: var(--accent1);
+  margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+}
+.section-label::before { content: '▶'; font-size: 0.6rem; }
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(48px, 8vw, 120px);
+  line-height: 0.95; margin-bottom: 24px;
+  letter-spacing: -1px;
+}
+.section-divider {
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent5), transparent);
+  margin: 80px 0;
+}
+
+/* PARALLAX LAYERS */
+.parallax-section {
+  position: relative; overflow: hidden;
+  padding: 100px 32px;
+  background: linear-gradient(135deg, var(--bg), var(--bg2));
+}
+.parallax-blob {
+  position: absolute; border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
+  pointer-events: none; opacity: 0.12;
+  animation: blobMorph 10s ease-in-out infinite;
+}
+@keyframes blobMorph {
+  0%, 100% { border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%; }
+  33% { border-radius: 40% 60% 30% 70% / 60% 40% 60% 40%; }
+  66% { border-radius: 70% 30% 50% 50% / 30% 70% 50% 50%; }
+}
+
+/* QUOTE OF THE DAY */
+#qotd-section {
+  background: var(--accent1);
+  padding: 80px 40px; text-align: center;
+  position: relative; overflow: hidden; z-index: 2;
+}
+#qotd-section::before {
+  content: '❝';
+  position: absolute; font-size: 300px; opacity: 0.08;
+  top: -60px; left: -20px; color: white;
+  font-family: serif; line-height: 1;
+}
+#qotd-text {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: clamp(22px, 4vw, 48px);
+  font-weight: 800; color: white; line-height: 1.3;
+  max-width: 900px; margin: 0 auto 20px;
+  position: relative; z-index: 1;
+  animation: quoteIn 0.6s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes quoteIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+#qotd-author {
+  font-size: 0.9rem; color: rgba(255,255,255,0.75);
+  font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  position: relative; z-index: 1;
+}
+#qotd-next-btn {
+  margin-top: 24px; padding: 12px 28px;
+  background: white; color: var(--accent1);
+  border: none; border-radius: 100px;
+  font-weight: 700; cursor: pointer; font-size: 0.85rem;
+  transition: all 0.2s; position: relative; z-index: 1;
+}
+#qotd-next-btn:hover { transform: scale(1.05); box-shadow: 0 8px 30px rgba(0,0,0,0.2); }
+
+/* RAPID FIRE DECK */
+#rapid-fire {
+  background: var(--bg2); border-top: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+  padding: 100px 32px; position: relative; z-index: 2;
+  overflow: hidden;
+}
+.rf-timer {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 32px;
+}
+.rf-timer-ring {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: conic-gradient(var(--accent1) 0%, var(--card-border) 0%);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.rf-timer-ring::before {
+  content: ''; position: absolute;
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--bg2);
+}
+#rf-time-display {
+  position: relative; z-index: 1;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem; color: var(--text);
+}
+.rf-card-stack { position: relative; width: 100%; max-width: 800px; margin: 0 auto; height: 320px; }
+.rf-card {
+  position: absolute; inset: 0;
+  background: var(--card-bg); border: 2px solid var(--card-border);
+  border-radius: 28px; padding: 48px;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  text-align: center; cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: 0 20px 60px var(--shadow);
+  backface-visibility: hidden;
+}
+.rf-card:not(.active) { pointer-events: none; }
+.rf-card.active { z-index: 10; }
+.rf-card-cat {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+  padding: 6px 14px; border-radius: 100px;
+  margin-bottom: 20px;
+}
+.rf-card-q {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: clamp(18px, 3vw, 28px); font-weight: 800;
+  line-height: 1.3; color: var(--text);
+  margin-bottom: 16px;
+}
+.rf-card-type { font-size: 0.75rem; color: var(--text2); font-weight: 500; }
+.rf-controls { display: flex; gap: 16px; justify-content: center; margin-top: 32px; flex-wrap: wrap; }
+.rf-btn {
+  padding: 14px 32px; border-radius: 100px;
+  font-weight: 700; font-size: 0.9rem;
+  border: 2px solid var(--card-border);
+  background: var(--card-bg); color: var(--text);
+  cursor: pointer; transition: all 0.2s;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.rf-btn.skip { border-color: var(--accent5); color: var(--accent5); }
+.rf-btn.skip:hover { background: var(--accent5); color: white; }
+.rf-btn.done { border-color: var(--accent4); color: var(--accent4); }
+.rf-btn.done:hover { background: var(--accent4); color: white; }
+.rf-btn.next { background: var(--accent1); border-color: var(--accent1); color: white; }
+.rf-btn.next:hover { transform: scale(1.05); box-shadow: 0 8px 30px var(--glow1); }
+
+/* CARD SWIPE ANIMATIONS */
+@keyframes swipeLeft {
+  to { transform: translateX(-150%) rotate(-20deg); opacity: 0; }
+}
+@keyframes swipeRight {
+  to { transform: translateX(150%) rotate(20deg); opacity: 0; }
+}
+@keyframes swipeUp {
+  to { transform: translateY(-120%) scale(0.8); opacity: 0; }
+}
+.rf-card.exit-left { animation: swipeLeft 0.4s forwards; }
+.rf-card.exit-right { animation: swipeRight 0.4s forwards; }
+.rf-card.exit-up { animation: swipeUp 0.4s forwards; }
+
+/* QOTD DECK */
+#qod-section {
+  padding: 100px 32px; position: relative; z-index: 2;
+  background: var(--bg);
+}
+.qod-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 48px; }
+.qod-card {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: 24px; padding: 32px; position: relative; overflow: hidden;
+  cursor: pointer; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  animation: cardSlideIn 0.6s backwards;
+}
+.qod-card:hover { transform: translateY(-8px); box-shadow: 0 24px 60px var(--shadow); }
+.qod-card::before {
+  content: ''; position: absolute;
+  inset: 0; opacity: 0; transition: opacity 0.3s;
+  border-radius: 24px;
+}
+.qod-card:hover::before { opacity: 1; }
+.qod-card-num {
+  font-family: 'Bebas Neue', sans-serif; font-size: 3rem;
+  opacity: 0.08; position: absolute; top: 16px; right: 20px;
+}
+.qod-card-icon { font-size: 2.5rem; margin-bottom: 16px; }
+.qod-card-q {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 1.1rem; font-weight: 700; line-height: 1.4;
+  margin-bottom: 12px; color: var(--text);
+}
+.qod-card-context { font-size: 0.8rem; color: var(--text2); line-height: 1.5; }
+@keyframes cardSlideIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* IMPROV CHALLENGES */
+#improv-challenges { padding: 100px 32px; position: relative; z-index: 2; }
+.challenge-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 48px; }
+.challenge-card {
+  border-radius: 24px; padding: 28px;
+  position: relative; overflow: hidden; cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  border: 1px solid transparent;
+}
+.challenge-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 20px 60px var(--shadow); }
+.challenge-card .badge {
+  display: inline-block; padding: 4px 12px; border-radius: 100px;
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; margin-bottom: 16px;
+  background: rgba(255,255,255,0.2); color: white;
+}
+.challenge-card h3 {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; color: white;
+}
+.challenge-card p { font-size: 0.85rem; color: rgba(255,255,255,0.85); line-height: 1.5; }
+.challenge-card .act-btn {
+  margin-top: 16px; padding: 10px 22px;
+  background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
+  color: white; border-radius: 100px; font-size: 0.8rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+}
+.challenge-card .act-btn:hover { background: rgba(255,255,255,0.4); }
+.c1 { background: linear-gradient(135deg, #ff4d1c, #ff2d8b); }
+.c2 { background: linear-gradient(135deg, #0057ff, #8b5cf6); }
+.c3 { background: linear-gradient(135deg, #00c896, #0057ff); }
+.c4 { background: linear-gradient(135deg, #ffd60a, #ff4d1c); }
+.c5 { background: linear-gradient(135deg, #8b5cf6, #ff2d8b); }
+.c6 { background: linear-gradient(135deg, #1a1208, #4a3f28); }
+
+/* CONTENT SECTIONS - Full content */
+.content-wrapper {
+  max-width: 960px; margin: 0 auto;
+  position: relative; z-index: 2;
+}
+.content-block {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: 24px; padding: 40px; margin-bottom: 24px;
+  transition: all 0.3s; position: relative; overflow: hidden;
+}
+.content-block::before {
+  content: ''; position: absolute;
+  left: 0; top: 0; bottom: 0; width: 4px;
+  border-radius: 4px 0 0 4px;
+}
+.content-block.red::before { background: var(--accent1); }
+.content-block.blue::before { background: var(--accent3); }
+.content-block.green::before { background: var(--accent4); }
+.content-block.yellow::before { background: var(--accent2); }
+.content-block.purple::before { background: var(--accent6); }
+.content-block.pink::before { background: var(--accent5); }
+.content-block h3 {
+  font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800;
+  margin-bottom: 16px; color: var(--text);
+}
+.content-block p { font-size: 0.95rem; line-height: 1.75; color: var(--text2); margin-bottom: 12px; }
+.content-block p:last-child { margin-bottom: 0; }
+.content-block ul, .content-block ol { padding-left: 20px; }
+.content-block li { font-size: 0.9rem; line-height: 1.7; color: var(--text2); margin-bottom: 6px; }
+.content-block strong { color: var(--text); font-weight: 700; }
+.content-block em { color: var(--accent1); font-style: normal; font-weight: 600; }
+.drill-box {
+  background: var(--bg); border: 1px dashed var(--card-border);
+  border-radius: 16px; padding: 24px; margin-top: 20px;
+}
+.drill-box h4 {
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent1); margin-bottom: 12px;
+}
+.drill-box p { font-size: 0.9rem; color: var(--text2); line-height: 1.6; }
+.table-wrap { overflow-x: auto; margin: 16px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+th { background: var(--accent1); color: white; padding: 10px 14px; text-align: left; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+td { padding: 10px 14px; border-bottom: 1px solid var(--card-border); color: var(--text2); line-height: 1.5; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,77,28,0.05); }
+blockquote {
+  border-left: 3px solid var(--accent1);
+  padding: 16px 20px; margin: 16px 0;
+  background: rgba(255,77,28,0.05); border-radius: 0 12px 12px 0;
+  font-style: italic; color: var(--text); font-size: 1rem; line-height: 1.6;
+}
+.sub-section { margin: 24px 0; }
+.sub-section h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+
+/* ACCORDION */
+.accordion {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: 16px; margin-bottom: 12px; overflow: hidden;
+  transition: all 0.3s;
+}
+.accordion-header {
+  padding: 20px 24px; cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  font-weight: 700; font-size: 1rem; color: var(--text);
+  transition: background 0.2s;
+}
+.accordion-header:hover { background: rgba(255,77,28,0.05); }
+.accordion-icon { transition: transform 0.3s; font-size: 1.2rem; }
+.accordion.open .accordion-icon { transform: rotate(180deg); }
+.accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.5s cubic-bezier(0.4,0,0.2,1); }
+.accordion.open .accordion-body { max-height: 2000px; }
+.accordion-content { padding: 0 24px 24px; }
+
+/* PROGRESS TRACKER */
+#progress-section {
+  background: var(--bg2); padding: 80px 32px;
+  border-top: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+  position: relative; z-index: 2;
+}
+.progress-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 32px; }
+.progress-skill {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: 16px; padding: 20px; cursor: pointer;
+  transition: all 0.3s;
+}
+.progress-skill:hover { transform: scale(1.03); border-color: var(--accent1); }
+.ps-name { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text2); margin-bottom: 8px; }
+.ps-bar { height: 6px; background: var(--card-border); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+.ps-fill { height: 100%; border-radius: 3px; transition: width 1s cubic-bezier(0.34,1.56,0.64,1); }
+.ps-level { font-size: 0.7rem; color: var(--text2); }
+
+/* ACT IT OUT MODAL */
+#act-modal {
+  position: fixed; inset: 0; z-index: 2000;
+  background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+  display: none; align-items: center; justify-content: center;
+  padding: 32px;
+}
+#act-modal.open { display: flex; }
+.act-modal-box {
+  background: var(--card-bg); border: 2px solid var(--accent1);
+  border-radius: 32px; padding: 48px; max-width: 700px; width: 100%;
+  position: relative; animation: modalIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: 0 40px 100px rgba(0,0,0,0.5), 0 0 60px var(--glow1);
+}
+@keyframes modalIn { from { opacity: 0; transform: scale(0.8) translateY(40px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+.act-modal-close {
+  position: absolute; top: 20px; right: 20px;
+  background: var(--card-border); border: none; border-radius: 50%;
+  width: 36px; height: 36px; cursor: pointer;
+  font-size: 1rem; color: var(--text2); transition: all 0.2s;
+}
+.act-modal-close:hover { background: var(--accent1); color: white; transform: rotate(90deg); }
+.act-modal-timer {
+  font-family: 'Bebas Neue', sans-serif; font-size: 5rem;
+  color: var(--accent1); text-align: center; line-height: 1;
+  animation: timerPulse 1s ease infinite;
+}
+@keyframes timerPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+.act-modal-label {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 4px;
+  text-transform: uppercase; color: var(--accent1); text-align: center;
+  margin-bottom: 16px;
+}
+.act-modal-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 2rem; font-weight: 800; text-align: center; margin-bottom: 12px;
+}
+.act-modal-desc { font-size: 1rem; color: var(--text2); text-align: center; line-height: 1.6; margin-bottom: 24px; }
+.act-modal-steps { list-style: none; margin-bottom: 28px; }
+.act-modal-steps li {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid var(--card-border);
+  font-size: 0.9rem; color: var(--text2);
+}
+.step-num {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--accent1); color: white;
+  font-size: 0.7rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.act-modal-controls { display: flex; gap: 12px; justify-content: center; }
+
+/* SCROLL REVEAL */
+.reveal { opacity: 0; transform: translateY(40px); transition: all 0.7s cubic-bezier(0.34,1.56,0.64,1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* STREAK COUNTER */
+.streak-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 20px; background: var(--accent2);
+  color: #1a1208; border-radius: 100px;
+  font-weight: 700; font-size: 0.85rem;
+  box-shadow: 0 4px 20px var(--glow2);
+  animation: streakPulse 2s ease infinite;
+}
+@keyframes streakPulse { 0%, 100% { box-shadow: 0 4px 20px var(--glow2); } 50% { box-shadow: 0 8px 40px var(--glow2); } }
+
+/* 30-DAY PLAN */
+.week-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-top: 32px; }
+.week-card {
+  border-radius: 20px; padding: 28px;
+  position: relative; overflow: hidden;
+  transition: all 0.3s;
+}
+.week-card:hover { transform: translateY(-6px); }
+.week-card h3 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; margin-bottom: 8px; color: white; }
+.week-card .focus { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.7; color: white; margin-bottom: 16px; }
+.week-card ul { list-style: none; }
+.week-card li { font-size: 0.85rem; color: rgba(255,255,255,0.9); padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.week-card li::before { content: '→ '; opacity: 0.6; }
+.w1 { background: linear-gradient(135deg, #ff4d1c, #ff8c42); }
+.w2 { background: linear-gradient(135deg, #0057ff, #00c896); }
+.w3 { background: linear-gradient(135deg, #8b5cf6, #ff2d8b); }
+.w4 { background: linear-gradient(135deg, #1a1208, #4a3f28); }
+
+/* BOOKS / RESOURCES */
+.books-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-top: 32px; }
+.book-card {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: 16px; padding: 20px; display: flex; gap: 14px;
+  align-items: flex-start; transition: all 0.3s;
+}
+.book-card:hover { border-color: var(--accent3); transform: translateY(-4px); box-shadow: 0 12px 40px var(--shadow); }
+.book-spine {
+  width: 8px; flex-shrink: 0; border-radius: 4px;
+  align-self: stretch;
+}
+.book-info h4 { font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.book-info p { font-size: 0.75rem; color: var(--text2); }
+
+/* SCENARIO DECK */
+#scenario-section { padding: 100px 32px; position: relative; z-index: 2; }
+.scenario-deck { max-width: 800px; margin: 0 auto; }
+.scenario-card {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: 28px; padding: 48px; text-align: center;
+  display: none; animation: scenarioReveal 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+.scenario-card.active { display: block; }
+@keyframes scenarioReveal { from { opacity: 0; transform: scale(0.9) rotateX(10deg); } to { opacity: 1; transform: scale(1) rotateX(0); } }
+.scenario-emoji { font-size: 4rem; margin-bottom: 20px; }
+.scenario-title { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; margin-bottom: 12px; }
+.scenario-bad { background: rgba(255,45,139,0.08); border: 1px solid rgba(255,45,139,0.2); border-radius: 12px; padding: 16px; margin: 16px 0; text-align: left; }
+.scenario-good { background: rgba(0,200,150,0.08); border: 1px solid rgba(0,200,150,0.2); border-radius: 12px; padding: 16px; margin: 16px 0; text-align: left; }
+.scenario-bad-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent5); margin-bottom: 6px; }
+.scenario-good-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent4); margin-bottom: 6px; }
+.scenario-text { font-size: 0.95rem; color: var(--text2); line-height: 1.6; }
+.scenario-scripts { text-align: left; margin-top: 16px; }
+.script-item { background: var(--bg); border-radius: 10px; padding: 12px 16px; margin-bottom: 8px; font-size: 0.9rem; color: var(--text); font-style: italic; }
+
+/* PERSONALITY SECTION */
+.personality-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; margin-top: 32px; }
+.pers-card {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: 20px; padding: 28px;
+  transition: all 0.3s; cursor: pointer;
+  position: relative; overflow: hidden;
+}
+.pers-card:hover { transform: translateY(-6px); border-color: var(--accent6); box-shadow: 0 20px 60px var(--shadow); }
+.pers-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.pers-type { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; margin-bottom: 4px; }
+.pers-benefit { font-size: 0.8rem; color: var(--accent4); font-weight: 600; margin-bottom: 4px; }
+.pers-risk { font-size: 0.8rem; color: var(--accent5); font-weight: 600; margin-bottom: 10px; }
+.pers-drill { font-size: 0.8rem; color: var(--text2); line-height: 1.5; }
+
+/* MOBILE */
+@media (max-width: 768px) {
+  nav { padding: 12px 16px; }
+  .nav-links .nav-link { display: none; }
+  .nav-link.keep { display: inline-block; }
+  .section { padding: 60px 20px; }
+  .hero-title { font-size: clamp(50px, 15vw, 90px); }
+  .float-badge { display: none; }
+  #xp-bar-container { flex-wrap: wrap; gap: 8px; }
+  .xp-stats { flex-wrap: wrap; gap: 8px; }
+}
+
+/* SOUND VISUALIZER */
+#sound-vis {
+  position: fixed; bottom: 24px; right: 24px;
+  display: flex; gap: 3px; align-items: flex-end;
+  z-index: 500;
+}
+.sv-bar {
+  width: 4px; background: var(--accent1);
+  border-radius: 2px;
+  animation: svAnim 0.8s ease infinite;
+}
+.sv-bar:nth-child(1) { height: 8px; animation-delay: 0s; }
+.sv-bar:nth-child(2) { height: 14px; animation-delay: 0.1s; }
+.sv-bar:nth-child(3) { height: 20px; animation-delay: 0.2s; }
+.sv-bar:nth-child(4) { height: 14px; animation-delay: 0.3s; }
+.sv-bar:nth-child(5) { height: 8px; animation-delay: 0.4s; }
+@keyframes svAnim {
+  0%, 100% { transform: scaleY(0.4); opacity: 0.4; }
+  50% { transform: scaleY(1.2); opacity: 1; }
+}
+#sound-vis.active .sv-bar { background: var(--accent4); }
+
+/* WILDCARD BUTTON */
+#wildcard {
+  position: fixed; bottom: 80px; right: 24px; z-index: 500;
+  width: 60px; height: 60px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent5), var(--accent6));
+  border: none; cursor: pointer; font-size: 1.5rem;
+  box-shadow: 0 8px 30px rgba(139,92,246,0.5);
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  animation: wildcardBounce 3s ease infinite;
+}
+@keyframes wildcardBounce { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.1) rotate(10deg); } }
+#wildcard:hover { transform: scale(1.2) rotate(20deg); box-shadow: 0 16px 60px rgba(139,92,246,0.7); }
+
+/* CONFETTI */
+.confetti-piece {
+  position: fixed; width: 10px; height: 14px;
+  pointer-events: none; z-index: 9999;
+  animation: confettiFall 3s ease forwards;
+}
+@keyframes confettiFall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* EVIDENCE SECTION */
+.evidence-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 32px; }
+.evidence-card {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: 20px; padding: 28px;
+  transition: all 0.3s;
+}
+.evidence-card:hover { transform: translateY(-4px); border-color: var(--accent3); }
+.ev-tag { font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent3); margin-bottom: 10px; }
+.ev-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; margin-bottom: 8px; color: var(--text); }
+.ev-desc { font-size: 0.85rem; color: var(--text2); line-height: 1.6; }
+
+/* LOADING SCREEN */
+#loader {
+  position: fixed; inset: 0; z-index: 9998;
+  background: #1a1208;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transition: opacity 0.6s;
+}
+#loader .loader-title {
+  font-family: 'Bebas Neue', sans-serif; font-size: 5rem;
+  background: linear-gradient(135deg, #ff4d1c, #ffd60a, #ff2d8b);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  animation: loaderPulse 0.5s ease infinite alternate;
+  letter-spacing: 4px;
+}
+@keyframes loaderPulse { from { transform: scale(0.98); } to { transform: scale(1.02); } }
+.loader-bar { width: 200px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 24px; overflow: hidden; }
+.loader-fill { height: 100%; background: linear-gradient(90deg, #ff4d1c, #ffd60a); border-radius: 2px; animation: loaderFill 1.5s ease forwards; }
+@keyframes loaderFill { from { width: 0%; } to { width: 100%; } }
+.loader-sub { font-size: 0.8rem; color: rgba(255,255,255,0.4); letter-spacing: 3px; text-transform: uppercase; margin-top: 12px; }
+
+/* COMBO DISPLAY */
+#combo-display {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0);
+  z-index: 1500; pointer-events: none;
+  font-family: 'Bebas Neue', sans-serif; font-size: 5rem;
+  background: linear-gradient(135deg, var(--accent2), var(--accent1));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  text-shadow: none; filter: drop-shadow(0 0 20px var(--glow2));
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+}
+#combo-display.show { transform: translate(-50%,-50%) scale(1.5); }
+#combo-display.hide { opacity: 0; transform: translate(-50%,-50%) scale(2); }
+
+/* DAILY SCHEDULE */
+.schedule-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 8px; margin-top: 32px; }
+.day-card {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: 16px; padding: 16px; text-align: center;
+  cursor: pointer; transition: all 0.3s;
+}
+.day-card:hover, .day-card.today { border-color: var(--accent1); background: rgba(255,77,28,0.05); }
+.day-card .day-name { font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text2); margin-bottom: 6px; }
+.day-card .day-theme { font-size: 1.2rem; margin-bottom: 6px; }
+.day-card .day-focus { font-size: 0.7rem; color: var(--text2); line-height: 1.3; }
+
+/* PRINCIPLES SECTION */
+.principles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 32px; }
+.principle-card {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: 20px; padding: 24px; text-align: center; cursor: pointer;
+  transition: all 0.3s;
+  position: relative; overflow: hidden;
+}
+.principle-card:hover { transform: translateY(-6px) rotate(-1deg); border-color: var(--accent2); }
+.principle-num {
+  font-family: 'Bebas Neue', sans-serif; font-size: 3rem;
+  color: var(--accent2); line-height: 1; margin-bottom: 8px;
+}
+.principle-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; margin-bottom: 8px; }
+.principle-desc { font-size: 0.8rem; color: var(--text2); line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-title">IMPROV QUEST</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+  <div class="loader-sub">Initializing Adventure...</div>
+</div>
+
+<!-- CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-dot"></div>
+
+<!-- PARTICLES -->
+<canvas id="particle-canvas"></canvas>
+
+<!-- COMBO DISPLAY -->
+<div id="combo-display">COMBO! 🔥</div>
+
+<!-- ACHIEVEMENT POP -->
+<div id="achievement-pop">🏆 Achievement Unlocked!</div>
+
+<!-- SOUND VISUALIZER -->
+<div id="sound-vis">
+  <div class="sv-bar"></div><div class="sv-bar"></div><div class="sv-bar"></div>
+  <div class="sv-bar"></div><div class="sv-bar"></div>
+</div>
+
+<!-- WILDCARD -->
+<button id="wildcard" title="Random Challenge!" onclick="triggerWildcard()">🎲</button>
+
+<!-- XP BAR -->
+<div id="xp-bar-container">
+  <div class="xp-label">⚡ XP</div>
+  <div id="xp-track"><div id="xp-fill"></div></div>
+  <div class="xp-stats">
+    <div class="xp-stat">Level <span id="level-display">1</span></div>
+    <div class="xp-stat">🔥 Streak <span id="streak-display">0</span></div>
+    <div class="xp-stat">✅ Done <span id="done-display">0</span></div>
+  </div>
+</div>
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="nav-logo">IMPROV QUEST</div>
+  <div class="nav-links">
+    <a href="#rapid-fire" class="nav-link">⚡ Rapid Fire</a>
+    <a href="#qod-section" class="nav-link">❓ Questions</a>
+    <a href="#improv-challenges" class="nav-link">🎭 Challenges</a>
+    <a href="#content-full" class="nav-link">📚 Playbook</a>
+    <a href="#scenario-section" class="nav-link">🎬 Scenarios</a>
+    <button id="dark-toggle" onclick="toggleDark()" class="keep nav-link"></button>
+  </div>
+</nav>
+
+<!-- ACT IT OUT MODAL -->
+<div id="act-modal">
+  <div class="act-modal-box">
+    <button class="act-modal-close" onclick="closeActModal()">✕</button>
+    <div class="act-modal-label">🎭 ACT IT OUT — LIVE CHALLENGE</div>
+    <div class="act-modal-timer" id="modal-timer">60</div>
+    <div class="act-modal-title" id="modal-title">Challenge Title</div>
+    <div class="act-modal-desc" id="modal-desc">Description goes here.</div>
+    <ul class="act-modal-steps" id="modal-steps"></ul>
+    <div class="act-modal-controls">
+      <button class="btn btn-primary" onclick="startModalTimer()">▶ START TIMER</button>
+      <button class="btn btn-secondary" onclick="closeActModal()">Skip</button>
+      <button class="btn" style="background:var(--accent4);color:white;" onclick="completeAct()">✓ DONE (+50 XP)</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== HERO ==================== -->
+<section id="hero">
+  <div class="hero-bg-text" style="left:-5%">IMPROVISE</div>
+  
+  <!-- Floating badges -->
+  <div class="float-badge" style="top:20%;left:5%;background:rgba(255,214,10,0.2);color:var(--accent1);border-color:var(--accent2);animation-delay:-2s">🎭 Act It Out</div>
+  <div class="float-badge" style="top:30%;right:6%;background:rgba(0,87,255,0.15);color:var(--accent3);border-color:var(--accent3);animation-delay:-4s">⚡ Yes, And</div>
+  <div class="float-badge" style="bottom:25%;left:8%;background:rgba(0,200,150,0.15);color:var(--accent4);border-color:var(--accent4);animation-delay:-1s">👁️ Presence</div>
+  <div class="float-badge" style="bottom:30%;right:5%;background:rgba(255,45,139,0.15);color:var(--accent5);border-color:var(--accent5);animation-delay:-3s">🎯 Status</div>
+  <div class="float-badge" style="top:60%;left:3%;background:rgba(139,92,246,0.15);color:var(--accent6);border-color:var(--accent6);animation-delay:-5s">🔥 Empathy</div>
+
+  <div class="hero-tag">🌍 LIFE SKILLS ADVENTURE — THE GAMIFIED PLAYBOOK</div>
+  <h1 class="hero-title">IMPROV<br>QUEST</h1>
+  <p class="hero-sub">
+    <strong>Acting trains truthful expression.</strong> Improvisation trains adaptive response.
+    Everyday life requires <strong>both.</strong> This is your complete playbook for presence,
+    confidence, empathy, and unscripted life.
+  </p>
+  <div class="hero-cta-group">
+    <button class="btn btn-primary" onclick="document.getElementById('rapid-fire').scrollIntoView({behavior:'smooth'});gainXP(10,'Hero Start!')">⚡ Start Rapid Fire</button>
+    <button class="btn btn-secondary" onclick="document.getElementById('improv-challenges').scrollIntoView({behavior:'smooth'})">🎭 View Challenges</button>
+  </div>
+  <div class="hero-scroll-hint">Scroll to adventure</div>
+</section>
+
+<!-- ==================== QUOTE OF THE DAY ==================== -->
+<div id="qotd-section">
+  <div id="qotd-text">Loading your daily wisdom...</div>
+  <div id="qotd-author">— Improv Quest Daily Wisdom</div>
+  <button id="qotd-next-btn" onclick="nextQOTD()">Next Quote ↻</button>
+</div>
+
+<!-- ==================== RAPID FIRE SECTION ==================== -->
+<section id="rapid-fire">
+  <div style="max-width:900px;margin:0 auto;">
+    <div class="section-label">⚡ RAPID FIRE DECK</div>
+    <h2 class="section-title" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,8vw,100px);line-height:0.95;margin-bottom:24px;">THINK<br>FAST.</h2>
+    <p style="color:var(--text2);font-size:1rem;margin-bottom:40px;max-width:600px;">Answer instantly. No overthinking. Tap Skip, Done, or ACT IT OUT. Points for everything. Build your streak. 🔥</p>
+    
+    <div class="rf-timer">
+      <div class="rf-timer-ring"><span id="rf-time-display">30</span></div>
+      <div>
+        <div style="font-weight:700;font-size:0.9rem;margin-bottom:4px;">Round Timer</div>
+        <div style="font-size:0.75rem;color:var(--text2);">Answer before the clock runs out</div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:12px;align-items:center;">
+        <div class="streak-badge">🔥 <span id="rf-streak">0</span> streak</div>
+        <button class="btn btn-primary" style="padding:10px 24px;font-size:0.8rem;" onclick="startRapidFire()">START ▶</button>
+      </div>
+    </div>
+
+    <div class="rf-card-stack" id="rf-card-stack">
+      <div class="rf-card active" id="rf-start-card">
+        <div style="font-size:4rem;margin-bottom:16px;">⚡</div>
+        <div class="rf-card-q">Ready to test your improv reflexes?</div>
+        <div class="rf-card-type">Hit START to begin your first round • 30 seconds per question</div>
+      </div>
+    </div>
+    
+    <div class="rf-controls">
+      <button class="rf-btn skip" onclick="rfSkip()">✗ Skip (−0)</button>
+      <button class="rf-btn done" onclick="rfDone()">✓ Done (+10 XP)</button>
+      <button class="rf-btn" style="border-color:var(--accent6);color:var(--accent6);" onclick="rfActItOut()">🎭 ACT IT OUT (+25 XP)</button>
+      <button class="rf-btn next" onclick="rfNext()">Next →</button>
+    </div>
+
+    <div style="margin-top:32px;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;" id="rf-score-grid">
+      <div class="progress-skill" style="text-align:center;">
+        <div class="ps-name">Answered</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--accent4);" id="rf-answered">0</div>
+      </div>
+      <div class="progress-skill" style="text-align:center;">
+        <div class="ps-name">Skipped</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--accent5);" id="rf-skipped">0</div>
+      </div>
+      <div class="progress-skill" style="text-align:center;">
+        <div class="ps-name">Acted Out</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--accent6);" id="rf-acted">0</div>
+      </div>
+      <div class="progress-skill" style="text-align:center;">
+        <div class="ps-name">XP Earned</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--accent2);" id="rf-xp">0</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ==================== QUESTION OF THE DAY DECK ==================== -->
+<section id="qod-section">
+  <div style="max-width:1300px;margin:0 auto;">
+    <div class="section-label">❓ QUESTION OF THE DAY DECK</div>
+    <h2 class="section-title" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,7vw,100px);line-height:0.95;margin-bottom:8px;">DAILY<br>QUESTIONS.</h2>
+    <p style="color:var(--text2);font-size:1rem;margin-bottom:8px;max-width:600px;">Deep questions shuffled fresh. Tap to reveal answers. Act them out for bonus XP.</p>
+    <button class="btn btn-primary" style="margin-bottom:40px;padding:12px 28px;font-size:0.85rem;" onclick="shuffleQOD()">🔀 Shuffle Deck</button>
+    
+    <div class="qod-grid" id="qod-grid">
+      <!-- Generated by JS -->
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ==================== IMPROV CHALLENGES ==================== -->
+<section id="improv-challenges">
+  <div style="max-width:1300px;margin:0 auto;">
+    <div class="section-label">🎭 ACT IT OUT CHALLENGES</div>
+    <h2 class="section-title" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,7vw,100px);line-height:0.95;margin-bottom:8px;">LIVE<br>CHALLENGES.</h2>
+    <p style="color:var(--text2);font-size:1rem;margin-bottom:40px;max-width:600px;">These require you to physically act, speak, or move. Real performance. Real growth.</p>
+    
+    <div class="challenge-grid" id="challenge-grid">
+      <!-- Generated by JS -->
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ==================== SCENARIOS ==================== -->
+<section id="scenario-section">
+  <div style="max-width:1300px;margin:0 auto;">
+    <div class="section-label">🎬 SCENARIO PLAYBOOK</div>
+    <h2 class="section-title" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,7vw,100px);line-height:0.95;margin-bottom:8px;">REAL<br>SITUATIONS.</h2>
+    <p style="color:var(--text2);font-size:1rem;margin-bottom:40px;max-width:600px;">Navigate every scenario with acting & improv tools. Swipe through all 6 real-world situations.</p>
+    
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;" id="scenario-nav"></div>
+    <div class="scenario-deck" id="scenario-deck"></div>
+    <div style="display:flex;justify-content:center;gap:16px;margin-top:24px;">
+      <button class="btn btn-secondary" style="padding:12px 28px;" onclick="prevScenario()">← Prev</button>
+      <button class="btn btn-primary" style="padding:12px 28px;" onclick="nextScenario()">Next →</button>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ==================== FULL CONTENT: THE PLAYBOOK ==================== -->
+<div id="content-full" style="background:var(--bg2);padding:20px 0;border-top:1px solid var(--card-border);">
+<div style="max-width:1100px;margin:0 auto;padding:80px 32px;">
+  <div class="section-label">📚 COMPLETE PLAYBOOK</div>
+  <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,7vw,100px);line-height:0.95;margin-bottom:40px;">THE FULL<br>GUIDE.</h2>
+
+  <!-- Core Answer -->
+  <div class="content-block red reveal">
+    <h3>🎯 Core Answer</h3>
+    <p>Improvisation and acting are not just "stage skills." They are <strong>life skills for uncertainty, communication, confidence, empathy, emotional control, creativity, and social presence</strong>. The best way to understand them is this:</p>
+    <blockquote>Acting trains truthful expression. Improvisation trains adaptive response. Everyday life requires both.</blockquote>
+    <p>The evidence is promising but not magical: studies and reviews suggest improv and drama training can improve communication, empathy, tolerance of uncertainty, teamwork, and socio-emotional skills, but many studies are small, context-specific, or educational rather than clinical. So the strongest claim is not "improv will transform your life overnight," but rather: <strong>regular, well-guided practice gives you repeated reps in exactly the social-emotional situations most people avoid.</strong></p>
+  </div>
+
+  <!-- Big Idea -->
+  <div class="content-block blue reveal">
+    <h3>💡 1. The Big Idea: Life is Mostly Unscripted</h3>
+    <p>Most people try to live as if they can prepare the perfect script:</p>
+    <ul>
+      <li>"What should I say?"</li>
+      <li>"How do I not look awkward?"</li>
+      <li>"What if they reject me?"</li>
+      <li>"What if I get asked something unexpected?"</li>
+      <li>"What if the conversation dies?"</li>
+      <li>"What if I embarrass myself?"</li>
+    </ul>
+    <p>But real life rarely follows a script. A boss changes direction. A date becomes awkward. A client objects. A friend gets offended. A family member says something emotional. A presentation gets interrupted. A plan collapses.</p>
+    <p><strong>Improvisation teaches you to respond. Acting teaches you to express.</strong></p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Person</th><th>Strength</th><th>Weakness</th></tr>
+        <tr><td>Overthinker</td><td>Plans well</td><td>Freezes when things change</td></tr>
+        <tr><td>Charmer</td><td>Responds quickly</td><td>May lack depth or sincerity</td></tr>
+        <tr><td>Intellectual</td><td>Explains well</td><td>May sound emotionally flat</td></tr>
+        <tr><td>Emotional person</td><td>Feels deeply</td><td>May overreact</td></tr>
+        <tr><td>People-pleaser</td><td>Reads people</td><td>Loses their own voice</td></tr>
+        <tr><td>Performer</td><td>Expresses well</td><td>May become fake or attention-seeking</td></tr>
+      </table>
+    </div>
+    <p>The goal is not to become a "theatre person." The goal is to become <strong>more alive, responsive, grounded, and socially capable</strong>.</p>
+  </div>
+
+  <!-- Core Skills -->
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:3rem;margin:48px 0 24px;color:var(--text);">2. THE CORE SKILLS</h3>
+
+  <!-- Presence -->
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>👁️ 2.1 Presence</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>Presence means you are actually here, not stuck in your head.</p>
+      <p>In daily life, lack of presence looks like: rehearsing your next sentence while someone is talking, checking your phone while pretending to listen, panicking about how you are perceived, forcing a conversation instead of noticing where it wants to go, missing emotional cues.</p>
+      <p>Acting and improv train presence because you cannot perform well while mentally absent. You must notice tone, body language, timing, emotional shifts, silence, tension, and opportunity.</p>
+      <p><strong>Everyday uses:</strong> dating, networking, interviews, teaching, sales, leadership, public speaking, conflict resolution, parenting, ministry or pastoral care, counselling-style conversations, customer service.</p>
+      <div class="drill-box">
+        <h4>🔥 Practical Drill: The 10-Second Arrival</h4>
+        <p>Before entering a conversation, meeting, call, or date:</p>
+        <ol style="padding-left:20px;margin-top:8px;">
+          <li style="margin-bottom:6px;color:var(--text2);">Feel your feet.</li>
+          <li style="margin-bottom:6px;color:var(--text2);">Relax your jaw.</li>
+          <li style="margin-bottom:6px;color:var(--text2);">Exhale slowly.</li>
+          <li style="margin-bottom:6px;color:var(--text2);">Look at the person properly.</li>
+          <li style="color:var(--text2);">Ask yourself: <em>"What is happening here, right now?"</em></li>
+        </ol>
+        <p style="margin-top:8px;">This sounds simple, but it pulls you out of self-consciousness and into the room.</p>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- Listening -->
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>👂 2.2 Listening</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>Improv is often misunderstood as being quick or funny. Actually, good improv is mostly <strong>listening</strong>.</p>
+      <blockquote>Listen to what is given, not what you wish had been given.</blockquote>
+      <p>In everyday life, poor listening causes many problems: you answer the wrong question, you defend yourself too early, you miss the emotional point, you interrupt, you give advice when someone wants empathy, you assume motives, you respond to words but miss tone.</p>
+      <p>Medical educators have used "medical improv" to train clinicians in listening, communication, teamwork, and empathy because healthcare conversations often require in-the-moment response to unexpected patient concerns.</p>
+      <div class="drill-box">
+        <h4>🔥 Practical Drill: Last-Word Response</h4>
+        <p>In a conversation, respond using one important word or idea the other person just said.</p>
+        <p style="margin-top:8px;"><strong>Example:</strong></p>
+        <p>Person A: "I just feel like nobody really notices how much I'm carrying."</p>
+        <p>Weak response: "Yeah, everyone is busy."</p>
+        <p><em>Better response: "Carrying a lot — what feels heaviest right now?"</em></p>
+        <p style="margin-top:8px;">This proves you heard them.</p>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- Adaptability -->
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>🌊 2.3 Adaptability</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>Improvisation trains the skill of staying useful when the plan changes. Many people are fine when life goes according to plan but collapse when someone disagrees, the schedule changes, a joke fails, a meeting turns tense, someone says "no," they are challenged publicly, or they lose control of the situation.</p>
+      <p>Research on improv with adolescents has found associations with reduced intolerance of uncertainty and social anxiety, especially through becoming more comfortable with uncertain situations.</p>
+      <div class="drill-box">
+        <h4>🔥 Practical Drill: Change One Variable</h4>
+        <p>Once a day, deliberately change one small routine: take a different route, start a conversation with a cashier, ask one extra question, give a different type of compliment, try a new food, speak first in a meeting, let someone else choose the plan.</p>
+        <p style="margin-top:8px;">The goal is not chaos. The goal is to teach your nervous system: <em>change is survivable.</em></p>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- Emotional Expression -->
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>❤️ 2.4 Emotional Expression</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>Acting trains you to make inner life visible. Many people have feelings, thoughts, convictions, and desires — but they do not express them clearly. Their face, tone, posture, and words do not match.</p>
+      <p><strong>Examples:</strong> You say "I'm fine" but look resentful. You say "I'm confident" but speak apologetically. You want connection but act cold. You want respect but sound aggressive. You want to apologize but sound defensive. You care deeply but appear indifferent.</p>
+      <p>Acting helps align <strong>inner intention</strong> and <strong>outer expression</strong>.</p>
+      <div class="drill-box">
+        <h4>🔥 Practical Drill: Same Sentence, Different Intention</h4>
+        <p>Say this sentence five different ways: <em>"I need to talk to you."</em></p>
+        <p style="margin-top:8px;">Try it with these intentions:</p>
+        <ol style="padding-left:20px;margin-top:4px;">
+          <li style="color:var(--text2);">comfort</li>
+          <li style="color:var(--text2);">confrontation</li>
+          <li style="color:var(--text2);">fear</li>
+          <li style="color:var(--text2);">romance</li>
+          <li style="color:var(--text2);">authority</li>
+        </ol>
+        <p style="margin-top:8px;">You will notice that the same words can create totally different meanings depending on tone, pace, posture, eye contact, and emotional intention.</p>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- Empathy -->
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>🤝 2.5 Empathy & Perspective-Taking</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>Acting asks: <strong>Who is this person, what do they want, what are they afraid of, and why do they behave this way?</strong> That is empathy training.</p>
+      <p>Studies on acting and drama education have reported improvements in empathy, theory of mind, and collaborative behavior, especially through role-play and perspective-taking.</p>
+      <div class="drill-box">
+        <h4>🔥 Practical Drill: Three Motives</h4>
+        <p>When someone annoys you, list three possible motives besides "they are bad."</p>
+        <p style="margin-top:8px;"><strong>Example:</strong> Someone replies late.</p>
+        <ul style="padding-left:20px;margin-top:4px;">
+          <li style="color:var(--text2);">They are overwhelmed.</li>
+          <li style="color:var(--text2);">They are avoiding conflict.</li>
+          <li style="color:var(--text2);">They do not understand the urgency.</li>
+        </ul>
+        <p style="margin-top:8px;">This does not excuse bad behavior. It prevents lazy interpretation.</p>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- Confidence -->
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>💪 2.6 Confidence</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>Improvisation builds confidence differently from motivational advice.</p>
+      <p>Normal confidence advice says: <em>"Believe in yourself."</em></p>
+      <p>Improv says: <em>"Practice surviving awkwardness."</em> That is more useful.</p>
+      <p>Confidence grows when you repeatedly experience: I can speak without perfect preparation. I can recover from mistakes. I can be seen. I can fail and still belong. I can make offers. I can respond to rejection. I can be spontaneous without losing myself.</p>
+      <div class="drill-box">
+        <h4>🔥 Practical Drill: Low-Stakes Boldness</h4>
+        <p>Do one low-stakes socially brave act daily: ask someone's name, compliment a stranger respectfully, ask a question in a group, suggest a plan, say "I disagree slightly," say "I don't know," make a harmless joke, ask for clarification.</p>
+        <p style="margin-top:8px;">The aim is not to impress. The aim is to reduce fear of being visible.</p>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- Yes And -->
+  <div class="content-block green reveal">
+    <h3>✅ 3. The "Yes, And" Principle — Properly Understood</h3>
+    <p>Most people misunderstand "Yes, and." It does <strong>not</strong> mean: agree with everything, be passive, become a people-pleaser, accept disrespect, avoid boundaries, say yes to bad ideas.</p>
+    <p>It means: <strong>Accept the reality of what has been offered, then add constructively.</strong></p>
+    <p>In life, "No, but" often kills momentum.</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Context</th><th>Blocking Response</th><th>"Yes, And" Response</th></tr>
+        <tr><td>Friend suggests cafe</td><td>"No, that place is probably overrated."</td><td>"Could be fun. Let's check if it's quiet enough to talk."</td></tr>
+        <tr><td>Colleague suggests new pitch angle</td><td>"That won't work."</td><td>"The angle is interesting. Let's test it against what the client actually wants."</td></tr>
+        <tr><td>Partner says "you don't listen"</td><td>"That's not true."</td><td>"I hear that you feel unheard. I also want to explain what was happening for me."</td></tr>
+      </table>
+    </div>
+    <div class="sub-section">
+      <h4>Advanced Version: Yes, And, But, Therefore</h4>
+      <p>A mature adult does not only say yes. Use this structure:</p>
+      <ol style="padding-left:20px;margin:12px 0;">
+        <li style="margin-bottom:8px;color:var(--text2);"><strong style="color:var(--text);">Yes</strong> — acknowledge reality.</li>
+        <li style="margin-bottom:8px;color:var(--text2);"><strong style="color:var(--text);">And</strong> — add useful information.</li>
+        <li style="margin-bottom:8px;color:var(--text2);"><strong style="color:var(--text);">But</strong> — introduce boundary or complication.</li>
+        <li style="color:var(--text2);"><strong style="color:var(--text);">Therefore</strong> — propose next step.</li>
+      </ol>
+      <blockquote>"Yes, I understand this is urgent, and I want to help. But I cannot finish it by tonight without dropping another commitment. Therefore, I can either send a rough version tonight or a polished version tomorrow."</blockquote>
+      <p>That is improv plus adulthood.</p>
+    </div>
+  </div>
+
+  <!-- Acting Tools -->
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:3rem;margin:48px 0 24px;color:var(--text);">4. ACTING TOOLS FOR EVERYDAY LIFE</h3>
+
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>🎯 4.1 Objective</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>In acting, every character wants something. In life, every person in a conversation usually wants something too: respect, safety, attention, control, affection, clarity, reassurance, status, freedom, forgiveness, validation, information, cooperation.</p>
+      <p>Before responding, ask: <strong>"What does this person want from me right now?"</strong></p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Situation</th><th>Surface Words</th><th>Possible Objective</th></tr>
+          <tr><td>Friend complains</td><td>"Nobody cares."</td><td>Wants comfort</td></tr>
+          <tr><td>Boss criticizes</td><td>"This is not good enough."</td><td>Wants standards met</td></tr>
+          <tr><td>Partner gets quiet</td><td>"Nothing."</td><td>Wants safety before honesty</td></tr>
+          <tr><td>Client pushes back</td><td>"Too expensive."</td><td>Wants justification or reassurance</td></tr>
+          <tr><td>Parent nags</td><td>"You should do this."</td><td>Wants influence or protection</td></tr>
+          <tr><td>Child acts out</td><td>"I hate this!"</td><td>Wants attention, autonomy, or containment</td></tr>
+        </table>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>⚖️ 4.2 Stakes</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>Stakes answer: <strong>"Why does this matter?"</strong> People become emotional when stakes are high. In acting, a boring line becomes powerful when the actor knows what is at stake. In life, many arguments are really about hidden stakes.</p>
+      <p><strong>Argument: "Why didn't you reply?"</strong><br>Surface issue: text message. Real stake: "Do I matter to you?"</p>
+      <p><strong>Argument: "Why are you late?"</strong><br>Surface issue: timing. Real stake: "Can I trust you?"</p>
+      <p><strong>Argument: "Why did you decide without me?"</strong><br>Surface issue: decision. Real stake: "Am I respected?"</p>
+      <div class="drill-box">
+        <h4>🔥 Practical Drill: Find the Hidden Stake</h4>
+        <p>When a conflict happens, ask: "What feels threatened here?" Possibilities: dignity, belonging, trust, identity, time, money, safety, future, fairness, autonomy. This moves you from arguing about symptoms to addressing the root.</p>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>🎭 4.3 Subtext</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>Subtext is what is meant but not said. Everyday life is full of subtext.</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Words</th><th>Possible Subtext</th></tr>
+          <tr><td>"It's fine."</td><td>"It is not fine, but I do not feel safe saying so."</td></tr>
+          <tr><td>"Do whatever you want."</td><td>"I feel powerless or resentful."</td></tr>
+          <tr><td>"Interesting."</td><td>"I disagree but am being polite."</td></tr>
+          <tr><td>"I'm busy."</td><td>"This is not a priority."</td></tr>
+          <tr><td>"We should catch up sometime."</td><td>"I like the idea but may not commit."</td></tr>
+          <tr><td>"I don't care."</td><td>"I care but do not want to be vulnerable."</td></tr>
+        </table>
+      </div>
+      <p style="margin-top:12px;">Acting makes you more sensitive to subtext. But be careful: <strong>subtext reading is not mind-reading</strong>. Treat it as a hypothesis, not certainty.</p>
+      <blockquote>"I might be reading this wrong, but it feels like something is bothering you. Is that true?"</blockquote>
+    </div></div>
+  </div>
+
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>👑 4.4 Status</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>Status in theatre does not only mean wealth or job title. It means the invisible power dynamic in a moment.</p>
+      <p><strong>High-status behavior:</strong> calm pace, taking space, fewer unnecessary words, relaxed eye contact, grounded posture, not rushing to fill silence, giving clear direction.</p>
+      <p><strong>Low-status behavior:</strong> over-apologizing, nervous laughter, shrinking posture, rushing speech, seeking approval constantly, explaining too much, avoiding eye contact.</p>
+      <p>Neither is always good or bad. Healthy social skill means you can <strong>raise or lower status intentionally</strong>.</p>
+      <ul>
+        <li>In leadership: raise status to provide direction.</li>
+        <li>With a shy person: lower status slightly to make them comfortable.</li>
+        <li>In conflict: maintain calm status without domination.</li>
+        <li>In romance: use playful status shifts.</li>
+        <li>In service roles: show respect without becoming servile.</li>
+      </ul>
+      <div class="drill-box">
+        <h4>🔥 Practical Drill: Status Slider</h4>
+        <p>In daily interactions, notice your status from 1 to 10. Then experiment: If you are too low — slow down, reduce apologizing, stand grounded. If you are too high — ask more questions, soften tone, share space.</p>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>🌍 4.5 Given Circumstances</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>Actors ask: where am I, who am I with, what just happened, what do I want, what is the relationship? Use this in real life before reacting. Ask:</p>
+      <ol style="padding-left:20px;">
+        <li style="color:var(--text2);margin-bottom:6px;">What is the context?</li>
+        <li style="color:var(--text2);margin-bottom:6px;">What just happened?</li>
+        <li style="color:var(--text2);margin-bottom:6px;">What does this person believe happened?</li>
+        <li style="color:var(--text2);margin-bottom:6px;">What is our relationship?</li>
+        <li style="color:var(--text2);margin-bottom:6px;">What emotional state are they in?</li>
+        <li style="color:var(--text2);margin-bottom:6px;">What do I want?</li>
+        <li style="color:var(--text2);margin-bottom:6px;">What would make this worse?</li>
+        <li style="color:var(--text2);">What would make this better?</li>
+      </ol>
+      <p style="margin-top:12px;">This is especially useful in conflict, leadership, negotiation, and emotionally charged conversations.</p>
+    </div></div>
+  </div>
+
+  <!-- Improv Tools -->
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:3rem;margin:48px 0 24px;color:var(--text);">5. IMPROV TOOLS FOR EVERYDAY LIFE</h3>
+
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>🤲 5.1 Make Your Partner Look Good</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>In improv, scenes work better when actors support each other. In life, many people try to win interactions instead of making the interaction work. Making your partner look good means: do not humiliate people unnecessarily, give people something to respond to, ask questions that help them open up, do not dominate the conversation, remember details, support their good ideas, help them recover from mistakes.</p>
+      <p>This is useful in: meetings, dates, friendships, family gatherings, team projects, leadership, hosting events.</p>
+      <p><strong>Danger:</strong> Do not use this to become a doormat. Support does not mean self-erasure.</p>
+    </div></div>
+  </div>
+
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>🎁 5.2 Offer, Don't Force</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>An "offer" in improv is anything you contribute to the scene. In life, an offer can be: a question, a joke, an invitation, an idea, a compliment, a vulnerability, a boundary, a suggestion, a plan.</p>
+      <p>Many people either make no offers or force their offers too aggressively. Healthy social interaction means: <strong>Offer clearly. Let the other person respond. Build from there.</strong></p>
+      <p><strong>Dating example:</strong></p>
+      <p>Weak: "I don't know, whatever you want." Too forceful: "We are going here. Be ready." Good offer: "I thought we could try this cafe Saturday afternoon. Does that sound good?"</p>
+      <p><strong>Work example:</strong></p>
+      <p>Weak: "Maybe, I don't know, this might be stupid..." Too forceful: "This is obviously the best idea." Good offer: "One possible direction is this. The advantage is X, but the risk is Y."</p>
+    </div></div>
+  </div>
+
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>✅ 5.3 Accept Reality Fast</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>A bad improviser denies what is happening. A bad real-life responder does the same. Examples: "This cannot be happening." "They should not feel that way." "This meeting should have gone differently." "I should not be nervous." "They should already know what I mean."</p>
+      <p>Acceptance does not mean approval. It means you stop wasting energy arguing with reality.</p>
+      <blockquote>"This is what is happening. What is the next useful move?"</blockquote>
+      <p>This is one of the most powerful life skills improv teaches.</p>
+    </div></div>
+  </div>
+
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>💡 5.4 Use Mistakes as Information</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>In improv, mistakes often become gifts. In life, mistakes can become data. Instead of "I failed, therefore I am bad," use "That reaction gave me information."</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Mistake</th><th>Information</th></tr>
+          <tr><td>Joke failed</td><td>Wrong timing, wrong audience, or unclear delivery</td></tr>
+          <tr><td>Presentation lost attention</td><td>Need stronger structure or story</td></tr>
+          <tr><td>Conflict escalated</td><td>You may have led with defense instead of curiosity</td></tr>
+          <tr><td>Date felt awkward</td><td>You may have overperformed or under-engaged</td></tr>
+          <tr><td>Boundary was ignored</td><td>You may need clearer consequences</td></tr>
+          <tr><td>Interview answer rambled</td><td>You need tighter storytelling</td></tr>
+        </table>
+      </div>
+      <p style="margin-top:12px;">This mindset reduces shame and increases learning.</p>
+    </div></div>
+  </div>
+
+  <!-- Everyday Scenarios -->
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:3rem;margin:48px 0 24px;color:var(--text);">6. EVERYDAY SCENARIOS</h3>
+
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>💬 6.1 Conversations — Running Out of Things to Say</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>Most people panic because they think conversation is about producing impressive content. It is not. Conversation is about attention, curiosity, and rhythm.</p>
+      <p><strong>Use the OAR method:</strong></p>
+      <ol style="padding-left:20px;">
+        <li style="color:var(--text2);margin-bottom:6px;"><strong style="color:var(--text);">Observe</strong> — notice something real.</li>
+        <li style="color:var(--text2);margin-bottom:6px;"><strong style="color:var(--text);">Ask</strong> — invite expansion.</li>
+        <li style="color:var(--text2);"><strong style="color:var(--text);">Relate</strong> — connect with your own experience.</li>
+      </ol>
+      <blockquote>"You mentioned you moved recently. What made you choose that area? I've noticed moving changes your routine more than people expect."</blockquote>
+      <div class="drill-box">
+        <h4>🔥 Drill: Three Follow-Up Questions</h4>
+        <p>Whenever someone says something, ask three possible follow-up questions in your head.</p>
+        <p style="margin-top:8px;"><strong>Statement:</strong> "I just started a new job."</p>
+        <ul style="padding-left:20px;margin-top:4px;">
+          <li style="color:var(--text2);">"How has the transition been?"</li>
+          <li style="color:var(--text2);">"What surprised you about the role?"</li>
+          <li style="color:var(--text2);">"Is it energizing or stressful so far?"</li>
+        </ul>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>💘 6.2 Dating</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>Improvisation helps dating because dating is uncertain, emotional, playful, and unscripted.</p>
+      <p><strong>Useful dating skills from improv/acting:</strong> playful banter, emotional presence, reading comfort levels, recovering from awkwardness, asking better questions, not over-controlling the interaction, expressing interest without desperation, handling rejection with dignity.</p>
+      <p><strong>Bad dating "performance"</strong> happens when someone tries to act like an ideal version of themselves: too polished, too agreeable, too rehearsed, too status-conscious, too focused on being liked.</p>
+      <p><strong>Better approach — acting truthfully:</strong> Do not pretend to be someone else. Express the best honest version of yourself.</p>
+      <div class="drill-box">
+        <h4>🔥 Date Drill: Playful Callback</h4>
+        <p>Notice something earlier in the date and refer back to it later.</p>
+        <p style="margin-top:8px;">Earlier: They say they are serious about coffee.</p>
+        <p>Later: "I'm now slightly nervous about your professional coffee judgment."</p>
+        <p style="margin-top:8px;">Callbacks create intimacy because they show attention.</p>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>💼 6.3 Work & Meetings</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>Improv helps at work because workplaces are full of ambiguity, politics, changing priorities, and unsaid concerns.</p>
+      <p><strong>Meeting skills:</strong> concise offers, active listening, status awareness, summarizing, building on ideas, redirecting tension, asking clarifying questions.</p>
+      <p><strong>Useful phrases:</strong></p>
+      <ul>
+        <li>"Let me build on that."</li>
+        <li>"The useful part of that idea is…"</li>
+        <li>"Can I test an assumption?"</li>
+        <li>"What problem are we actually solving?"</li>
+        <li>"I hear two priorities: speed and quality. Which one wins here?"</li>
+        <li>"Before we decide, what are we not seeing?"</li>
+      </ul>
+      <p style="margin-top:12px;"><strong>Acting skill: Executive Presence</strong> — Executive presence is not pretending to be powerful. It is controlled communication under pressure. Train: slower pace, fewer filler words, grounded posture, clear intention, calm facial expression, direct but respectful eye contact, ending sentences cleanly instead of trailing off.</p>
+    </div></div>
+  </div>
+
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>🎤 6.4 Public Speaking</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>Acting helps with delivery. Improv helps with live adaptation. Public speaking requires: voice, body, pacing, emotional clarity, audience awareness, story, recovery from mistakes, comfort with silence.</p>
+      <div class="drill-box">
+        <h4>🔥 Drill: Same Content, Three Energies</h4>
+        <p>Take one short message and deliver it as: 1) inspiring, 2) serious, 3) conversational. You will learn that communication is not just words. It is energy plus structure.</p>
+      </div>
+      <div class="drill-box" style="margin-top:12px;">
+        <h4>🔥 Q&A Improv Method</h4>
+        <p>When asked a difficult question: 1. Breathe. 2. Acknowledge the question. 3. Clarify if needed. 4. Answer the core. 5. Bridge to what matters.</p>
+        <blockquote style="margin-top:8px;">"That's a fair question. The short answer is no, not under current conditions. The reason is…"</blockquote>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>⚔️ 6.5 Conflict</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>Conflict is where acting and improv become especially useful. Acting helps you understand motives. Improv helps you avoid blocking. Emotional regulation helps you not escalate.</p>
+      <p><strong>The Conflict Formula — when someone confronts you:</strong></p>
+      <ol style="padding-left:20px;">
+        <li style="color:var(--text2);margin-bottom:6px;"><strong style="color:var(--text);">Receive</strong> — do not interrupt.</li>
+        <li style="color:var(--text2);margin-bottom:6px;"><strong style="color:var(--text);">Name</strong> — identify the concern.</li>
+        <li style="color:var(--text2);margin-bottom:6px;"><strong style="color:var(--text);">Validate</strong> — acknowledge the emotional logic.</li>
+        <li style="color:var(--text2);margin-bottom:6px;"><strong style="color:var(--text);">Clarify</strong> — ask what specifically happened.</li>
+        <li style="color:var(--text2);margin-bottom:6px;"><strong style="color:var(--text);">Own</strong> — take responsibility where appropriate.</li>
+        <li style="color:var(--text2);margin-bottom:6px;"><strong style="color:var(--text);">Boundary</strong> — state limits if needed.</li>
+        <li style="color:var(--text2);"><strong style="color:var(--text);">Repair</strong> — propose next action.</li>
+      </ol>
+      <blockquote>"I hear that you felt dismissed when I interrupted you. I can understand why that would bother you. I did not intend to shut you down, but I can see the impact. Next time I'll let you finish before responding."</blockquote>
+      <p><strong>What not to do:</strong> instantly defend, cross-examine, mock, exaggerate, use "always" and "never," fake calm while being passive-aggressive, apologize just to end the conversation.</p>
+    </div></div>
+  </div>
+
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>🏛️ 6.6 Leadership</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>Leadership is partly directing the "scene" of a group. A leader must sense: the emotional temperature, who has power, who is silent, who is confused, who is performing agreement, where the real conflict is, when to speed up, when to slow down, when the group needs clarity.</p>
+      <blockquote>A good leader does not control every line. A good leader creates the conditions for useful contributions.</blockquote>
+      <p><strong>Practical leadership moves:</strong> summarize often, invite quieter voices, name tension respectfully, make clear offers, clarify stakes, distinguish idea conflict from personal conflict, keep the group oriented toward the objective.</p>
+      <blockquote>"I'm noticing we're circling. I think there are two unresolved questions: budget and timeline. Let's handle those separately."</blockquote>
+    </div></div>
+  </div>
+
+  <div class="accordion reveal">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>💰 6.7 Sales, Persuasion & Negotiation</span>
+      <span class="accordion-icon">▼</span>
+    </div>
+    <div class="accordion-body"><div class="accordion-content">
+      <p>Improvisation helps because persuasion is not a monologue. It is responsive.</p>
+      <p><strong>Bad persuasion:</strong> talks too much, ignores objections, over-scripts, pushes features instead of needs, treats resistance as stupidity.</p>
+      <p><strong>Good persuasion:</strong> listens for the real concern, adapts language, uses stories, reads emotional readiness, handles objections without defensiveness, makes the other person feel respected.</p>
+      <div class="drill-box">
+        <h4>🔥 Sales Improv Drill: Objection Building</h4>
+        <p>When someone objects, do not crush the objection. Build on it.</p>
+        <p style="margin-top:8px;">Customer: "This is expensive."<br>Weak: "No, it's actually cheap."<br>Better: "Yes, it is a serious investment. The question is whether the cost of not solving this is higher."</p>
+        <p style="margin-top:8px;">Customer: "I need to think about it."<br>Weak: "What is there to think about?"<br>Better: "Of course. What part needs the most thought — price, timing, trust, or fit?"</p>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- Psychological Benefits -->
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:3rem;margin:48px 0 24px;color:var(--text);">7. DEEPER PSYCHOLOGICAL BENEFITS</h3>
+
+  <div class="content-block purple reveal">
+    <h3>🧠 7.1 Tolerance of Uncertainty</h3>
+    <p>Many anxious people are not afraid only of bad outcomes. They are afraid of <strong>not knowing</strong>. Improv repeatedly exposes you to not knowing in a structured, playful environment. That can train flexibility. Research on adolescents suggests improv participation may reduce intolerance of uncertainty and social anxiety, although it should not be oversold as a substitute for therapy.</p>
+    <p><strong>Everyday benefit:</strong> You become less dependent on perfect certainty before acting.</p>
+  </div>
+
+  <div class="content-block pink reveal">
+    <h3>💔 7.2 Shame Resilience</h3>
+    <p>Improv teaches you: mistakes are survivable, awkwardness passes, people forget faster than you think, failure can become connection, being seen is not death. This matters because shame blocks growth.</p>
+    <p>People avoid: dancing, dating, networking, asking questions, public speaking, trying new careers, apologizing, setting boundaries, creating content, expressing love — not because they are incapable, but because they fear humiliation. Improv gives controlled exposure to small embarrassment.</p>
+  </div>
+
+  <div class="content-block yellow reveal">
+    <h3>🌈 7.3 Identity Flexibility</h3>
+    <p>Acting lets you explore different parts of yourself: assertive self, playful self, tender self, authoritative self, grieving self, romantic self, angry self, disciplined self, foolish self, wise self.</p>
+    <p>Many people are trapped in one narrow identity: "I'm the serious one." "I'm the nice one." "I'm the quiet one." "I'm the responsible one." "I'm the funny one." "I'm the successful one." "I'm the spiritual one." "I'm the chill one."</p>
+    <p>Acting expands your range. The goal is not fakery. It is <strong>integration</strong>.</p>
+  </div>
+
+  <!-- Critical Warnings -->
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:3rem;margin:48px 0 24px;color:var(--text);">8. ⚠️ CRITICAL WARNINGS</h3>
+
+  <div class="content-block red reveal">
+    <h3>⚠️ 8.1 Becoming Performative</h3>
+    <p>The biggest danger is using acting to manage impressions instead of express truth. Signs: you always monitor how you appear, you perform vulnerability but avoid real vulnerability, you charm instead of connect, you use emotional expression to manipulate, you become addicted to applause, you cannot be ordinary, you feel empty when not watched.</p>
+    <p><strong>Correction:</strong> Acting should make you more truthful, not more fake.</p>
+  </div>
+
+  <div class="content-block blue reveal">
+    <h3>⚡ 8.2 Mistaking Spontaneity for Wisdom</h3>
+    <p>Improv values quick response. But in real life, not every quick response is wise. Sometimes the best move is: pause, think, pray, sleep on it, consult someone, gather facts, say nothing yet. Spontaneity is useful. Impulsiveness is dangerous.</p>
+  </div>
+
+  <div class="content-block green reveal">
+    <h3>🚫 8.3 Overusing "Yes, And"</h3>
+    <p>Some people use "Yes, and" to avoid boundaries. Bad use: "Yes, and I'll take on more work even though I'm burned out." Mature use: "Yes, I understand the need, and I can help within these limits." Improv should increase flexibility, not erase self-respect.</p>
+  </div>
+
+  <div class="content-block yellow reveal">
+    <h3>🎪 8.4 Turning Life into a Stage</h3>
+    <p>Not every moment needs charisma. Sometimes people need quiet presence, not performance. A common mistake: making jokes when someone needs empathy, storytelling when someone needs listening, being dramatic when simplicity is better, trying to be interesting instead of interested.</p>
+    <p><strong>Rule:</strong> Use performance skill in service of the moment, not your ego.</p>
+  </div>
+
+  <div class="content-block purple reveal">
+    <h3>🛡️ 8.5 Unsafe Groups or Bad Teachers</h3>
+    <p>Improv and acting classes vary widely. Bad environments may involve: humiliation disguised as training, pressure to disclose trauma, inappropriate physical boundaries, cult-like group dynamics, teacher ego, "anything goes" culture, emotional intensity without care.</p>
+    <p>A good training environment has: consent, psychological safety, clear boundaries, progressive difficulty, respect for beginners, no forced vulnerability, feedback without cruelty.</p>
+  </div>
+
+  <!-- Practice System -->
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:3rem;margin:48px 0 24px;color:var(--text);">9. COMPLETE EVERYDAY PRACTICE SYSTEM</h3>
+
+  <div class="content-block red reveal">
+    <h3>🏋️ Level 1: Personal Foundation</h3>
+    <p><strong>Goal:</strong> Become more present, expressive, and comfortable being seen.</p>
+    <div class="sub-section">
+      <h4>Daily Drills:</h4>
+      <p><strong>1. Voice warm-up — 3 minutes:</strong> Read a paragraph aloud. Practice: slower, clearer, warmer, more authoritative, more playful.</p>
+      <p><strong>2. Emotion naming — 2 minutes:</strong> Ask "What am I feeling right now?" Use precise words: irritated, embarrassed, hopeful, tense, disappointed, grateful, restless, insecure, curious, defensive. Emotional precision improves emotional control.</p>
+      <p><strong>3. One bold offer:</strong> Make one small social offer daily: invite someone, ask a question, make a suggestion, share an opinion, tell a short story, give a compliment, request help.</p>
+    </div>
+  </div>
+
+  <div class="content-block blue reveal">
+    <h3>🌐 Level 2: Social Skill</h3>
+    <p><strong>Goal:</strong> Become better in conversations, groups, and relationships.</p>
+    <div class="sub-section">
+      <h4>Weekly Drills:</h4>
+      <p><strong>1. Conversation replay:</strong> After an important conversation, ask: What did they want? What did I want? What was the emotional tone? Where did I block? Where did I build? What did I miss? What would I try next time?</p>
+      <p><strong>2. Curiosity reps:</strong> In three conversations per week, ask one deeper question. Instead of "How was work?" ask "What part of work has been taking the most energy lately?"</p>
+      <p><strong>3. Status experiment:</strong> Once per week, practice raising or lowering your social status intentionally. Raise status: speak slower, reduce qualifiers, hold posture, make clear requests. Lower status: ask for input, admit uncertainty, use warmth, share credit.</p>
+    </div>
+  </div>
+
+  <div class="content-block green reveal">
+    <h3>🎯 Level 3: Communication Mastery</h3>
+    <p><strong>Goal:</strong> Speak with clarity, emotional range, and influence.</p>
+    <div class="sub-section">
+      <h4>Weekly Drills:</h4>
+      <p><strong>1. One-minute story:</strong> Tell a one-minute story with this structure: Situation → Tension → Choice → Result → Meaning.</p>
+      <blockquote>"I used to avoid speaking up in meetings. One day I had an idea but almost kept quiet. I forced myself to say it simply. The team used part of it. I learned that confidence often comes after action, not before."</blockquote>
+      <p><strong>2. Objection practice:</strong> Practice responding to: "That's too expensive." "I disagree." "I'm not ready." "Why should I trust you?" "That won't work." "You're wrong." "I need more time." Use: "I hear you. The concern seems to be ____. Is that right?"</p>
+      <p><strong>3. Emotional range practice:</strong> Take one sentence: "I understand what you mean." Say it as: sincere, defensive, romantic, tired, angry, amused, authoritative, compassionate. This builds expressive control.</p>
+    </div>
+  </div>
+
+  <div class="content-block purple reveal">
+    <h3>🏆 Level 4: Real-World Performance</h3>
+    <p><strong>Goal:</strong> Apply acting and improv in high-stakes life moments. Use this before: interviews, speeches, dates, difficult conversations, negotiations, leadership meetings, sales calls, family conflict.</p>
+    <div class="drill-box">
+      <h4>Pre-Performance Checklist — Ask:</h4>
+      <ol style="padding-left:20px;">
+        <li style="color:var(--text2);margin-bottom:6px;">What is my objective?</li>
+        <li style="color:var(--text2);margin-bottom:6px;">What does the other person likely want?</li>
+        <li style="color:var(--text2);margin-bottom:6px;">What are the stakes?</li>
+        <li style="color:var(--text2);margin-bottom:6px;">What emotional tone is appropriate?</li>
+        <li style="color:var(--text2);margin-bottom:6px;">What is my first offer?</li>
+        <li style="color:var(--text2);margin-bottom:6px;">What boundary do I need?</li>
+        <li style="color:var(--text2);margin-bottom:6px;">What would "success" look like?</li>
+        <li style="color:var(--text2);">How do I want people to feel after interacting with me?</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Exercises Library -->
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:3rem;margin:48px 0 24px;color:var(--text);">12. EXERCISES LIBRARY</h3>
+
+  <div class="content-block red reveal">
+    <h3>🧍 Solo Exercises</h3>
+    <p><strong>1. Mirror Neutrality:</strong> Stand in front of a mirror. Relax your face. Say "I am allowed to be seen." Notice discomfort. Do not perform. Just stay.</p>
+    <p><strong>2. Gibberish Speech:</strong> Speak nonsense for one minute with confidence. Purpose: reduce dependence on perfect words.</p>
+    <p><strong>3. Object Monologue:</strong> Pick an object and talk about it for one minute as if it matters deeply. Purpose: train imagination and commitment.</p>
+    <p><strong>4. Emotional Scale:</strong> Say "hello" at emotional intensity levels 1 to 10. Purpose: develop emotional modulation.</p>
+    <p><strong>5. Character Walk:</strong> Walk as a king, a tired nurse, a nervous intern, a child at a theme park, a spy, a teacher, a person with a secret. Purpose: expand physical range and status awareness.</p>
+  </div>
+
+  <div class="content-block blue reveal">
+    <h3>👥 Partner Exercises</h3>
+    <p><strong>1. Yes, And Story:</strong> Person A starts a story with one sentence. Person B continues with "Yes, and…" Continue for 3 minutes. Purpose: build acceptance and collaboration.</p>
+    <p><strong>2. Word-at-a-Time Story:</strong> Each person says one word at a time to create a story. Purpose: reduce control and increase listening.</p>
+    <p><strong>3. Status Switch:</strong> Have a normal conversation. Secretly choose high or low status. Then switch. Purpose: understand power dynamics.</p>
+    <p><strong>4. Emotional Translation:</strong> One person says a neutral sentence. The other guesses the emotion. Purpose: sharpen emotional reading.</p>
+    <p><strong>5. Objective Scene:</strong> Each person secretly chooses an objective (get reassurance, avoid blame, receive praise, end the conversation, get invited, gain control, be forgiven). Then have a conversation. Purpose: see how hidden motives shape interaction.</p>
+  </div>
+
+  <!-- Deeper Psychological Benefits -->
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:3rem;margin:48px 0 24px;color:var(--text);">14. ACTING vs. LYING vs. MASKING vs. AUTHENTICITY</h3>
+
+  <div class="content-block green reveal">
+    <h3>🎭 The Difference</h3>
+    <p><strong>Acting</strong> is truthful expression under chosen circumstances. Healthy acting in life: expressing confidence when nervous but prepared, speaking warmly even when tired, staying calm during conflict, telling a story with structure, choosing tone intentionally.</p>
+    <p><strong>Lying</strong> is creating false reality to mislead. Examples: pretending to care when you plan to exploit, faking credentials, manipulating someone's feelings, inventing stories for status.</p>
+    <p><strong>Masking</strong> is hiding your real self for safety, approval, or survival. Sometimes masking is necessary in hostile environments. But long-term masking can become exhausting.</p>
+    <p><strong>Authenticity</strong> is not "saying whatever you feel." It is acting in alignment with truth, values, and context. Mature authenticity asks: "What is true, useful, kind, and appropriate here?"</p>
+  </div>
+
+  <!-- What to Study -->
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:3rem;margin:48px 0 24px;color:var(--text);">15. WHAT TO STUDY DEEPER</h3>
+
+  <div class="content-block yellow reveal">
+    <h3>📖 Improv Traditions</h3>
+    <ul>
+      <li><strong>Viola Spolin</strong> — games, spontaneity, play</li>
+      <li><strong>Keith Johnstone</strong> — status, spontaneity, narrative</li>
+      <li><strong>Del Close</strong> — long-form improv, group mind</li>
+    </ul>
+    <p style="margin-top:12px;"><strong>Acting Approaches:</strong></p>
+    <ul>
+      <li><strong>Stanislavski</strong> — objectives, given circumstances, truthful action</li>
+      <li><strong>Meisner</strong> — repetition, listening, instinctive response</li>
+      <li><strong>Uta Hagen</strong> — substitution, realism, identity</li>
+      <li><strong>Practical Aesthetics</strong> — action-based acting</li>
+    </ul>
+    <p style="margin-top:12px;"><strong>Adjacent Fields:</strong> communication studies, emotional intelligence, negotiation, social psychology, rhetoric, storytelling, somatic awareness, leadership development, therapy-informed communication.</p>
+  </div>
+
+  <!-- Books -->
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:3rem;margin:48px 0 24px;color:var(--text);">16. BOOKS & RESOURCES</h3>
+  <div class="books-grid">
+    <div class="book-card"><div class="book-spine" style="background:var(--accent1)"></div><div class="book-info"><h4>An Actor Prepares</h4><p>Konstantin Stanislavski</p></div></div>
+    <div class="book-card"><div class="book-spine" style="background:var(--accent5)"></div><div class="book-info"><h4>Respect for Acting</h4><p>Uta Hagen</p></div></div>
+    <div class="book-card"><div class="book-spine" style="background:var(--accent3)"></div><div class="book-info"><h4>A Practical Handbook for the Actor</h4><p>Bruder, Cohn, Olnek et al.</p></div></div>
+    <div class="book-card"><div class="book-spine" style="background:var(--accent6)"></div><div class="book-info"><h4>The Intent to Live</h4><p>Larry Moss</p></div></div>
+    <div class="book-card"><div class="book-spine" style="background:var(--accent4)"></div><div class="book-info"><h4>Sanford Meisner on Acting</h4><p>Meisner & Longwell</p></div></div>
+    <div class="book-card"><div class="book-spine" style="background:var(--accent2)"></div><div class="book-info"><h4>Impro</h4><p>Keith Johnstone</p></div></div>
+    <div class="book-card"><div class="book-spine" style="background:var(--accent1)"></div><div class="book-info"><h4>Impro for Storytellers</h4><p>Keith Johnstone</p></div></div>
+    <div class="book-card"><div class="book-spine" style="background:var(--accent3)"></div><div class="book-info"><h4>Improvisation for the Theater</h4><p>Viola Spolin</p></div></div>
+    <div class="book-card"><div class="book-spine" style="background:var(--accent5)"></div><div class="book-info"><h4>Truth in Comedy</h4><p>Halpern, Close, Johnson</p></div></div>
+    <div class="book-card"><div class="book-spine" style="background:var(--accent4)"></div><div class="book-info"><h4>Improv Wisdom</h4><p>Patricia Ryan Madson</p></div></div>
+    <div class="book-card"><div class="book-spine" style="background:var(--accent6)"></div><div class="book-info"><h4>Crucial Conversations</h4><p>Patterson, Grenny et al.</p></div></div>
+    <div class="book-card"><div class="book-spine" style="background:var(--accent1)"></div><div class="book-info"><h4>Nonviolent Communication</h4><p>Marshall Rosenberg</p></div></div>
+    <div class="book-card"><div class="book-spine" style="background:var(--accent2)"></div><div class="book-info"><h4>Difficult Conversations</h4><p>Stone, Patton, Heen</p></div></div>
+    <div class="book-card"><div class="book-spine" style="background:var(--accent5)"></div><div class="book-info"><h4>The Charisma Myth</h4><p>Olivia Fox Cabane</p></div></div>
+    <div class="book-card"><div class="book-spine" style="background:var(--accent3)"></div><div class="book-info"><h4>Made to Stick</h4><p>Chip Heath & Dan Heath</p></div></div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== EVIDENCE MAP ==================== -->
+<section style="padding:100px 32px;position:relative;z-index:2;background:var(--bg2);border-top:1px solid var(--card-border);">
+  <div style="max-width:1300px;margin:0 auto;">
+    <div class="section-label">🔬 EVIDENCE MAP</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,7vw,100px);line-height:0.95;margin-bottom:40px;">THE<br>RESEARCH.</h2>
+    <div class="evidence-grid">
+      <div class="evidence-card reveal">
+        <div class="ev-tag">STRONGEST EVIDENCE</div>
+        <div class="ev-title">Communication & Teamwork</div>
+        <div class="ev-desc">Medical improv has been discussed in health-profession education as a way to train listening, teamwork, empathy, and professional communication. The evidence is promising, especially as an experiential training method, though much is educational and program-based rather than large-scale clinical. (ACP Journals)</div>
+      </div>
+      <div class="evidence-card reveal">
+        <div class="ev-tag">PROMISING EVIDENCE</div>
+        <div class="ev-title">Uncertainty Tolerance & Social Anxiety</div>
+        <div class="ev-desc">Research on adolescent improv programs found reductions in social anxiety and intolerance of uncertainty, suggesting improv may help people practice uncertainty in a low-stigma way. This is promising but should not be treated as a replacement for clinical therapy where therapy is needed. (ScienceDirect)</div>
+      </div>
+      <div class="evidence-card reveal">
+        <div class="ev-tag">STRONG ASSOCIATIONS</div>
+        <div class="ev-title">Empathy & Theory of Mind</div>
+        <div class="ev-desc">Acting and drama training have been associated with improvements in empathy, theory of mind, and socio-emotional competence, especially through role-play and perspective-taking. (ResearchGate)</div>
+      </div>
+      <div class="evidence-card reveal">
+        <div class="ev-tag">2025 REVIEW</div>
+        <div class="ev-title">Higher Education & Professional Training</div>
+        <div class="ev-desc">A 2025 mini-review found positive effects of applied improvisation in areas such as health, management, and teacher training, including empathy, communication, error management, and teaching flexibility, while also noting that evidence levels vary. (Frontiers in Psychology)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PERSONALITY TYPES ==================== -->
+<section style="padding:100px 32px;position:relative;z-index:2;">
+  <div style="max-width:1300px;margin:0 auto;">
+    <div class="section-label">🧬 BY PERSONALITY TYPE</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,7vw,100px);line-height:0.95;margin-bottom:40px;">FIND<br>YOURSELF.</h2>
+    <div class="personality-grid" id="personality-grid">
+      <!-- Generated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 30-DAY PLAN ==================== -->
+<section style="padding:100px 32px;position:relative;z-index:2;background:var(--bg2);border-top:1px solid var(--card-border);">
+  <div style="max-width:1300px;margin:0 auto;">
+    <div class="section-label">📅 30-DAY PLAN</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,7vw,100px);line-height:0.95;margin-bottom:40px;">THE<br>JOURNEY.</h2>
+    <div class="week-grid">
+      <div class="week-card w1 reveal">
+        <div class="focus">Week 1 Focus Question</div>
+        <h3>"What is happening right now?"</h3>
+        <p style="color:rgba(255,255,255,0.8);margin:8px 0 16px;font-size:0.9rem;">Presence & Awareness</p>
+        <ul>
+          <li>3 minutes voice reading daily</li>
+          <li>1 conversation: listen without interrupting</li>
+          <li>1 moment noticing body language</li>
+          <li>1 emotion label per day</li>
+        </ul>
+      </div>
+      <div class="week-card w2 reveal">
+        <div class="focus">Week 2 Focus Question</div>
+        <h3>"What can I add constructively?"</h3>
+        <p style="color:rgba(255,255,255,0.8);margin:8px 0 16px;font-size:0.9rem;">Offers & Adaptability</p>
+        <ul>
+          <li>Make one small social offer</li>
+          <li>Use "Yes, and" once per day</li>
+          <li>Change one small routine</li>
+          <li>Practice one-minute storytelling</li>
+        </ul>
+      </div>
+      <div class="week-card w3 reveal">
+        <div class="focus">Week 3 Focus Question</div>
+        <h3>"Does my outside match my inside?"</h3>
+        <p style="color:rgba(255,255,255,0.8);margin:8px 0 16px;font-size:0.9rem;">Expression & Confidence</p>
+        <ul>
+          <li>One sentence in five emotional tones</li>
+          <li>Speak up where you normally stay quiet</li>
+          <li>Tell one short story daily</li>
+          <li>Practice slower speech</li>
+        </ul>
+      </div>
+      <div class="week-card w4 reveal">
+        <div class="focus">Week 4 Focus Question</div>
+        <h3>"What is the next truthful and useful move?"</h3>
+        <p style="color:rgba(255,255,255,0.8);margin:8px 0 16px;font-size:0.9rem;">Advanced Life Application</p>
+        <ul>
+          <li>Identify someone's objective</li>
+          <li>Notice hidden stakes in conversation</li>
+          <li>Practice one boundary</li>
+          <li>Review one interaction</li>
+          <li>Attempt one brave action</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== WEEKLY SCHEDULE ==================== -->
+<section style="padding:100px 32px;position:relative;z-index:2;">
+  <div style="max-width:1300px;margin:0 auto;">
+    <div class="section-label">📆 WEEKLY TEMPLATE</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,7vw,100px);line-height:0.95;margin-bottom:40px;">YOUR<br>WEEK.</h2>
+    <div class="schedule-grid" id="schedule-grid">
+      <div class="day-card" onclick="gainXP(5,'Monday Listening!')">
+        <div class="day-name">Monday</div>
+        <div class="day-theme">👂</div>
+        <div class="day-focus">Listening Day — Don't interrupt. Ask better follow-ups.</div>
+      </div>
+      <div class="day-card" onclick="gainXP(5,'Tuesday Voice!')">
+        <div class="day-name">Tuesday</div>
+        <div class="day-theme">🎤</div>
+        <div class="day-focus">Voice Day — Speak slower, clearer, and warmer.</div>
+      </div>
+      <div class="day-card" onclick="gainXP(5,'Wednesday Offer!')">
+        <div class="day-name">Wednesday</div>
+        <div class="day-theme">🎁</div>
+        <div class="day-focus">Offer Day — Make one contribution you'd normally withhold.</div>
+      </div>
+      <div class="day-card" onclick="gainXP(5,'Thursday Status!')">
+        <div class="day-name">Thursday</div>
+        <div class="day-theme">👑</div>
+        <div class="day-focus">Status Day — Notice power dynamics. Practice calm confidence.</div>
+      </div>
+      <div class="day-card" onclick="gainXP(5,'Friday Story!')">
+        <div class="day-name">Friday</div>
+        <div class="day-theme">📖</div>
+        <div class="day-focus">Story Day — Tell one short story with beginning, tension, and point.</div>
+      </div>
+      <div class="day-card" onclick="gainXP(5,'Saturday Play!')">
+        <div class="day-name">Saturday</div>
+        <div class="day-theme">🎲</div>
+        <div class="day-focus">Play Day — Something spontaneous, creative, or socially playful.</div>
+      </div>
+      <div class="day-card" onclick="gainXP(5,'Sunday Reflect!')">
+        <div class="day-name">Sunday</div>
+        <div class="day-theme">🔍</div>
+        <div class="day-focus">Reflection Day — Where did I build? Block? Be fake? Be brave?</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PRINCIPLES ==================== -->
+<section style="padding:100px 32px;position:relative;z-index:2;background:var(--bg2);border-top:1px solid var(--card-border);">
+  <div style="max-width:1300px;margin:0 auto;">
+    <div class="section-label">⭐ CORE PRINCIPLES</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,7vw,100px);line-height:0.95;margin-bottom:40px;">NEVER<br>FORGET.</h2>
+    <div class="principles-grid">
+      <div class="principle-card reveal" onclick="gainXP(5,'Principle 1!')">
+        <div class="principle-num">1</div>
+        <div class="principle-title">Receive Before Responding</div>
+        <div class="principle-desc">Most people respond too early. Listen first.</div>
+      </div>
+      <div class="principle-card reveal" onclick="gainXP(5,'Principle 2!')">
+        <div class="principle-num">2</div>
+        <div class="principle-title">Build, Don't Block</div>
+        <div class="principle-desc">Do not kill every idea reflexively. Find the useful part.</div>
+      </div>
+      <div class="principle-card reveal" onclick="gainXP(5,'Principle 3!')">
+        <div class="principle-num">3</div>
+        <div class="principle-title">Make Offers</div>
+        <div class="principle-desc">A life with no offers becomes passive. Speak, suggest, invite, ask, create.</div>
+      </div>
+      <div class="principle-card reveal" onclick="gainXP(5,'Principle 4!')">
+        <div class="principle-num">4</div>
+        <div class="principle-title">Recover Quickly</div>
+        <div class="principle-desc">Mistakes matter less than recovery.</div>
+      </div>
+      <div class="principle-card reveal" onclick="gainXP(5,'Principle 5!')">
+        <div class="principle-num">5</div>
+        <div class="principle-title">Read Objectives</div>
+        <div class="principle-desc">People are always wanting something. Learn to identify what.</div>
+      </div>
+      <div class="principle-card reveal" onclick="gainXP(5,'Principle 6!')">
+        <div class="principle-num">6</div>
+        <div class="principle-title">Match Expression to Intention</div>
+        <div class="principle-desc">Say what you mean in a way people can actually feel.</div>
+      </div>
+      <div class="principle-card reveal" onclick="gainXP(5,'Principle 7!')">
+        <div class="principle-num">7</div>
+        <div class="principle-title">Stay Truthful</div>
+        <div class="principle-desc">Do not use performance skills to become fake. Use them to become clearer.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRESS SECTION -->
+<section id="progress-section">
+  <div style="max-width:1300px;margin:0 auto;">
+    <div class="section-label">📊 YOUR PROGRESS</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,7vw,100px);line-height:0.95;margin-bottom:8px;">SKILL<br>TRACKER.</h2>
+    <p style="color:var(--text2);margin-bottom:8px;">Click each skill to level it up. Track your adventure journey.</p>
+    <div class="progress-grid" id="progress-grid">
+      <!-- Generated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- BOTTOM LINE -->
+<div style="background:var(--text);padding:80px 32px;text-align:center;position:relative;z-index:2;">
+  <div style="max-width:800px;margin:0 auto;">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:4rem;color:var(--accent2);margin-bottom:24px;line-height:1;">THE BOTTOM LINE</div>
+    <p style="font-size:1.1rem;line-height:1.8;color:rgba(255,255,255,0.8);">
+      <strong style="color:white;">Improvisation teaches you to handle the unscripted. Acting teaches you to express truth with clarity.</strong> Together, they make you more present, adaptable, empathetic, confident, emotionally expressive, and socially effective — as long as you use them for truth and connection, not performance and manipulation.
+    </p>
+    <p style="margin-top:20px;font-size:0.8rem;color:rgba(255,255,255,0.4);letter-spacing:2px;text-transform:uppercase;">Info current as of May 21, 2026</p>
+    <button class="btn btn-primary" style="margin-top:32px;" onclick="triggerConfetti();gainXP(100,'Finished the Guide! 🏆')">🏆 I've Read It All! (+100 XP)</button>
+  </div>
+</div>
+
+<script>
+// ==================== CORE DATA ====================
+const quotes = [
+  { text: "Acting trains truthful expression. Improvisation trains adaptive response. Everyday life requires both.", author: "Improv Quest" },
+  { text: "Improv teaches you to practice surviving awkwardness — which is more useful than being told to believe in yourself.", author: "Improv Quest" },
+  { text: "Listen to what is given, not what you wish had been given.", author: "Core Improv Principle" },
+  { text: "Accept the reality of what has been offered, then add constructively.", author: "The Yes, And Principle" },
+  { text: "A good leader does not control every line. A good leader creates the conditions for useful contributions.", author: "Improv Leadership" },
+  { text: "Confidence grows when you repeatedly experience: I can speak without perfect preparation.", author: "Improv Quest" },
+  { text: "Mistakes are survivable. Awkwardness passes. Being seen is not death.", author: "Shame Resilience" },
+  { text: "Acting should make you more truthful, not more fake.", author: "The Core Warning" },
+  { text: "This is what is happening. What is the next useful move?", author: "Acceptance Principle" },
+  { text: "You do not need to feel confident to make an offer.", author: "Confidence Building" },
+  { text: "Charisma without character becomes manipulation. Character without expression can become invisible.", author: "Improv Quest" },
+  { text: "Most people panic because they think conversation is about producing impressive content. It is not.", author: "Conversation Skills" },
+  { text: "Spontaneity is useful. Impulsiveness is dangerous.", author: "Critical Warning" },
+  { text: "Mature authenticity asks: What is true, useful, kind, and appropriate here?", author: "Authenticity" },
+  { text: "Silence is not always failure. Sometimes it is depth arriving.", author: "Scenario Playbook" },
+  { text: "Not every moment needs charisma. Sometimes people need quiet presence, not performance.", author: "Critical Warning" },
+  { text: "Boundaries are not anti-improv. They are strong offers.", author: "Yes, And Principle" },
+  { text: "Regular, well-guided practice gives you repeated reps in exactly the social-emotional situations most people avoid.", author: "Evidence Base" }
+];
+
+const rapidFireQuestions = [
+  { q: "What does 'Yes, And' actually mean in real life?", cat: "Principles", color: "var(--accent1)", type: "💬 Verbal Answer", isAct: false },
+  { q: "Name 3 possible motives for someone who's being rude to you right now.", cat: "Empathy", color: "var(--accent4)", type: "🧠 Think Fast", isAct: false },
+  { q: "Say 'I need to talk to you' with FEAR — right now, out loud!", cat: "Emotional Expression", color: "var(--accent5)", type: "🎭 ACT IT OUT", isAct: true },
+  { q: "What's the difference between a high-status and low-status posture?", cat: "Status", color: "var(--accent3)", type: "💬 Verbal Answer", isAct: false },
+  { q: "Walk like a king for 10 seconds. Do it now.", cat: "Character", color: "var(--accent6)", type: "🎭 PHYSICAL", isAct: true },
+  { q: "What is 'subtext' and give a real-life example?", cat: "Acting Tools", color: "var(--accent2)", type: "🧠 Think Fast", isAct: false },
+  { q: "Your friend says 'I'm fine' but looks upset. What do you say?", cat: "Empathy", color: "var(--accent4)", type: "💬 Verbal Answer", isAct: false },
+  { q: "Say 'hello' at emotional intensity level 10. SCREAM it if you have to.", cat: "Emotional Range", color: "var(--accent1)", type: "🎭 ACT IT OUT", isAct: true },
+  { q: "Name the 7 steps of the Conflict Formula.", cat: "Conflict", color: "var(--accent3)", type: "🧠 Memory Test", isAct: false },
+  { q: "Speak gibberish confidently for 15 seconds.", cat: "Exercises", color: "var(--accent5)", type: "🎭 PHYSICAL", isAct: true },
+  { q: "What hidden stake is usually behind 'Why didn't you reply?'", cat: "Stakes", color: "var(--accent6)", type: "🧠 Think Fast", isAct: false },
+  { q: "Do the 10-second arrival ritual right now. Feet, jaw, breath, look.", cat: "Presence", color: "var(--accent2)", type: "🎭 PHYSICAL", isAct: true },
+  { q: "What's the OAR method in conversations?", cat: "Conversation", color: "var(--accent1)", type: "🧠 Memory Test", isAct: false },
+  { q: "Stand in front of something reflective. Say 'I am allowed to be seen.'", cat: "Exercises", color: "var(--accent4)", type: "🎭 ACT IT OUT", isAct: true },
+  { q: "Name 3 things listening does NOT look like in real life.", cat: "Listening", color: "var(--accent3)", type: "💬 Verbal Answer", isAct: false },
+  { q: "Use the 'Yes, And, But, Therefore' structure on this: 'Can you finish this today?'", cat: "Yes And", color: "var(--accent5)", type: "💬 Apply It", isAct: false },
+  { q: "Walk as a nervous intern entering a job interview. Go!", cat: "Character Walk", color: "var(--accent6)", type: "🎭 PHYSICAL", isAct: true },
+  { q: "What's the biggest danger of applying improv in real life?", cat: "Critical Thinking", color: "var(--accent1)", type: "🧠 Think Fast", isAct: false },
+  { q: "Quickly name 5 things people avoid due to shame.", cat: "Shame Resilience", color: "var(--accent2)", type: "🧠 Speed Round", isAct: false },
+  { q: "Say 'I understand what you mean' as if you're in love.", cat: "Emotional Range", color: "var(--accent5)", type: "🎭 ACT IT OUT", isAct: true },
+  { q: "What are the 3 improv masters and what did each focus on?", cat: "History", color: "var(--accent3)", type: "🧠 Memory Test", isAct: false },
+  { q: "Do a 30-second 'I am confident' power stance right now.", cat: "Status", color: "var(--accent4)", type: "🎭 PHYSICAL", isAct: true },
+  { q: "What's the difference between spontaneity and impulsiveness?", cat: "Wisdom", color: "var(--accent6)", type: "💬 Verbal Answer", isAct: false },
+  { q: "What does it mean to 'make your partner look good' in real life?", cat: "Collaboration", color: "var(--accent1)", type: "🧠 Think Fast", isAct: false },
+  { q: "Use only your face to show 'I'm deeply disappointed' — hold it 5 seconds.", cat: "Expression", color: "var(--accent5)", type: "🎭 PHYSICAL", isAct: true },
+  { q: "Name the 4-step structure for a one-minute story.", cat: "Storytelling", color: "var(--accent2)", type: "🧠 Memory Test", isAct: false },
+  { q: "Someone says 'This is too expensive.' Respond using objection-building.", cat: "Persuasion", color: "var(--accent3)", type: "💬 Apply It", isAct: false },
+  { q: "What is 'identity flexibility' and why does acting help develop it?", cat: "Psychology", color: "var(--accent4)", type: "🧠 Think Fast", isAct: false },
+  { q: "Clap your hands 5 times making each one sound totally different.", cat: "Physical Awareness", color: "var(--accent6)", type: "🎭 PHYSICAL", isAct: true },
+  { q: "What makes a good vs bad improv training environment?", cat: "Safety", color: "var(--accent1)", type: "💬 Verbal Answer", isAct: false }
+];
+
+const qodQuestions = [
+  { q: "If you had to name the emotional intention behind your last difficult conversation, what would it be?", icon: "💭", context: "Related to Objectives & Subtext — Section 4.1 & 4.3" },
+  { q: "When was the last time you blocked someone's idea? What could you have built on instead?", icon: "🚧", context: "Related to Yes, And — Section 3" },
+  { q: "What hidden stake is underneath a conflict you're currently experiencing?", icon: "⚖️", context: "Related to Stakes — Section 4.2" },
+  { q: "Which of your 'identity labels' might be limiting you right now?", icon: "🏷️", context: "Related to Identity Flexibility — Section 7.3" },
+  { q: "Where in your life are you performing instead of expressing?", icon: "🎭", context: "Related to Critical Warning 8.1 — Becoming Performative" },
+  { q: "What small social offer have you been avoiding making this week?", icon: "🎁", context: "Related to Offer, Don't Force — Section 5.2" },
+  { q: "What mistakes from this week can you reframe as useful information?", icon: "💡", context: "Related to Section 5.4 — Use Mistakes as Information" },
+  { q: "Who in your life do you struggle to empathize with, and what are 3 possible motives for their behavior?", icon: "🤝", context: "Related to Empathy — Section 2.5" },
+  { q: "In your last important conversation, were you truly present or rehearsing your next line?", icon: "👁️", context: "Related to Presence — Section 2.1" },
+  { q: "What is your emotional intensity default — too high, too low, or right on?", icon: "🎚️", context: "Related to Emotional Expression — Section 2.4" },
+  { q: "Describe a time you accepted reality fast and it helped. What happened?", icon: "✅", context: "Related to Accept Reality Fast — Section 5.3" },
+  { q: "Which personality type from Section 13 resonates most with you right now?", icon: "🧬", context: "Related to Application by Personality Type — Section 13" },
+  { q: "What's the difference between being truthful and being authentic in your own words?", icon: "🌟", context: "Related to Section 14 — Acting vs Authenticity" },
+  { q: "How would you describe your current 'status level' in your main relationships?", icon: "👑", context: "Related to Status — Section 4.4" },
+  { q: "What situation in your life most needs the Conflict Formula right now?", icon: "⚔️", context: "Related to Conflict — Section 6.5" }
+];
+
+const challenges = [
+  {
+    title: "The Status Slider",
+    desc: "Have a 2-minute conversation and intentionally shift from low to high status mid-conversation.",
+    badge: "STATUS",
+    color: "c1",
+    steps: ["Start with low-status signals: apologize, speak quickly, shrink slightly", "Mid-conversation, slow your speech", "Take up more space, reduce filler words", "End with a clear, confident statement"],
+    time: 90,
+    xp: 50
+  },
+  {
+    title: "Gibberish Confidence",
+    desc: "Speak in confident, expressive gibberish for 60 seconds as if giving a TED Talk.",
+    badge: "EXPRESSION",
+    color: "c2",
+    steps: ["Stand up straight", "Speak loud, clear gibberish with full conviction", "Use your hands and face expressively", "Never break — commit completely"],
+    time: 60,
+    xp: 35
+  },
+  {
+    title: "Three Motives Game",
+    desc: "Think of someone who frustrated you this week. Out loud, name 3 possible motives for their behavior besides 'they're bad.'",
+    badge: "EMPATHY",
+    color: "c3",
+    steps: ["Name the person and situation", "Say motive 1: overwhelm, stress, fear?", "Say motive 2: avoidance, confusion?", "Say motive 3: something about their past?"],
+    time: 60,
+    xp: 30
+  },
+  {
+    title: "Sentence in 5 Emotions",
+    desc: "Say 'I need to talk to you' in 5 completely different emotional tones back to back.",
+    badge: "EMOTIONAL RANGE",
+    color: "c4",
+    steps: ["1. Comfort — warm, gentle", "2. Fear — shaky, uncertain", "3. Confrontation — sharp, direct", "4. Romance — soft, meaningful", "5. Authority — calm, firm"],
+    time: 45,
+    xp: 40
+  },
+  {
+    title: "Character Walk Gauntlet",
+    desc: "Walk around your space as 5 different characters for 30 seconds each. Fully commit.",
+    badge: "CHARACTER",
+    color: "c5",
+    steps: ["A king entering their throne room", "A tired nurse after a 12-hour shift", "A nervous intern on their first day", "A spy who knows they're being watched", "A child at a theme park seeing rides for the first time"],
+    time: 150,
+    xp: 60
+  },
+  {
+    title: "The Yes, And Story",
+    desc: "Start telling a story out loud. After every 2 sentences, add 'Yes, and...' and continue. Go wild.",
+    badge: "YES AND",
+    color: "c1",
+    steps: ["Start with: 'There was once a person who...'", "Build freely — the wilder the better", "Use 'Yes, and' to accept and escalate", "End with a satisfying conclusion"],
+    time: 60,
+    xp: 30
+  },
+  {
+    title: "The Objection Gauntlet",
+    desc: "Respond to 5 objections using improv-style objection building. No crushing allowed.",
+    badge: "PERSUASION",
+    color: "c2",
+    steps: ["'This is too expensive' → Build on it", "'I need to think about it' → Name the real concern", "'That won't work' → Find the useful part", "'I don't trust you yet' → Validate and bridge", "'I'm not ready' → Acknowledge and clarify"],
+    time: 90,
+    xp: 50
+  },
+  {
+    title: "Mirror Neutrality",
+    desc: "Stand in front of a mirror. Relax every muscle. Say 'I am allowed to be seen.' Hold it for 30 seconds.",
+    badge: "PRESENCE",
+    color: "c3",
+    steps: ["Find a mirror", "Relax your face completely", "Breathe slowly", "Say 'I am allowed to be seen'", "Hold the gaze for 30 seconds without performing"],
+    time: 60,
+    xp: 45
+  },
+  {
+    title: "Emotional Scale: Hello",
+    desc: "Say 'hello' at 10 different emotional intensity levels, from 1 (dead inside) to 10 (explosion of joy).",
+    badge: "MODULATION",
+    color: "c4",
+    steps: ["Level 1: barely audible, flat", "Level 3: sleepy, low energy", "Level 5: neutral, professional", "Level 7: warm and genuinely happy", "Level 10: full explosion of pure joy"],
+    time: 45,
+    xp: 35
+  },
+  {
+    title: "10-Second Arrival Ritual",
+    desc: "Before your next real interaction today, do the complete 10-second arrival ritual.",
+    badge: "PRESENCE",
+    color: "c5",
+    steps: ["Feel your feet on the floor", "Relax your jaw consciously", "Exhale slowly and completely", "Look at the person or space properly", "Ask yourself: 'What is happening here, right now?'"],
+    time: 10,
+    xp: 20
+  },
+  {
+    title: "Object Monologue",
+    desc: "Pick any nearby object. Talk about it for 60 seconds as if it's the most important thing in the world.",
+    badge: "COMMITMENT",
+    color: "c6",
+    steps: ["Pick any object near you", "Give it a name and history", "Talk about why it matters deeply", "Show emotion — reverence, love, sadness", "Do NOT laugh or break character"],
+    time: 60,
+    xp: 35
+  },
+  {
+    title: "Playful Callback Practice",
+    desc: "In your next real conversation, notice one detail early and reference it later. Practice that here first.",
+    badge: "DATING/SOCIAL",
+    color: "c1",
+    steps: ["Imagine someone says: 'I'm really into specialty coffee'", "Continue the conversation mentally for 3-4 exchanges", "Later, naturally callback: 'I'm now nervous about your coffee judgment'", "Notice how callbacks create intimacy"],
+    time: 60,
+    xp: 25
+  }
+];
+
+const scenarios = [
+  {
+    emoji: "😶",
+    title: "Awkward Silence",
+    bad: "Panic. Fill space with nervous rambling about the weather for 5 minutes.",
+    good: "Smile, breathe, make a real observation, or ask a genuine question.",
+    scripts: [
+      "\"I'm thinking about what you said.\"",
+      "\"That's a good question; give me a second.\"",
+      "\"Actually, I'm curious — how did you get into that?\"",
+      "\"I like that we don't have to rush the conversation.\""
+    ],
+    principle: "Silence is not always failure. Sometimes it is depth arriving."
+  },
+  {
+    emoji: "👊",
+    title: "Public Challenge",
+    bad: "Defend aggressively, attack back, over-explain for 10 minutes, or freeze and say nothing.",
+    good: "Stay grounded. Clarify. Respond to the core, not the emotion of the attack.",
+    scripts: [
+      "\"That's a fair challenge. Let me separate two things: what I meant, and what may have come across.\"",
+      "\"I may not have explained that clearly. The main point is…\""
+    ],
+    principle: "This is acting skill: calm under attention."
+  },
+  {
+    emoji: "😰",
+    title: "Social Anxiety",
+    bad: "Try to eliminate anxiety before acting — which means never acting at all.",
+    good: "Act with the anxiety present. Confidence follows action, not the other way around.",
+    scripts: [
+      "Self-talk: \"I do not need to feel confident to make an offer.\"",
+      "Small action: ask one question",
+      "Make eye contact with someone",
+      "Comment on something present",
+      "Breathe slower deliberately"
+    ],
+    principle: "Confidence follows reps."
+  },
+  {
+    emoji: "😭",
+    title: "Someone is Emotional",
+    bad: "Jump straight to fixing the problem, giving advice, or minimizing their feelings.",
+    good: "Receive first. Solve later. Listen without an agenda.",
+    scripts: [
+      "\"That sounds heavy.\"",
+      "\"I can see why that affected you.\"",
+      "\"Do you want advice, comfort, or just someone to listen?\"",
+      "\"What part hurts the most?\""
+    ],
+    principle: "This is acting empathy plus improv listening."
+  },
+  {
+    emoji: "🛑",
+    title: "Setting a Boundary",
+    bad: "Apologize excessively for having limits, or swing to aggressive overexplanation.",
+    good: "Clear, calm, respectful. A boundary is a strong offer, not an attack.",
+    scripts: [
+      "\"I understand this matters. I'm not able to do that.\"",
+      "\"I can help with X, but not Y.\"",
+      "\"I'm open to discussing it, but not if I'm being insulted.\"",
+      "\"That does not work for me. Here is what I can offer.\""
+    ],
+    principle: "Boundaries are not anti-improv. They are strong offers."
+  },
+  {
+    emoji: "✨",
+    title: "Being More Charismatic",
+    bad: "Try to be louder, funnier, more impressive. Perform for the crowd.",
+    good: "Charisma = presence + warmth + conviction + responsiveness + timing.",
+    scripts: [
+      "Speak slightly slower",
+      "Make people feel seen — use their name",
+      "React genuinely, not theatrically",
+      "Ask better questions than you give answers",
+      "Have a clear point before you start talking"
+    ],
+    principle: "Charisma without character becomes manipulation. Character without expression can become invisible."
+  }
+];
+
+const personalities = [
+  { icon: "🤫", type: "Shy People", benefit: "Best: Speaking up, tolerating attention, starting conversations", risk: "Risk: Forcing too hard too soon", drill: "One small offer per day.", color: "var(--accent3)" },
+  { icon: "🧠", type: "Overthinkers", benefit: "Best: Acting before perfect certainty, trusting response", risk: "Risk: Analyzing improv instead of doing it", drill: "30-second spontaneous answer practice.", color: "var(--accent1)" },
+  { icon: "🕊️", type: "People-Pleasers", benefit: "Best: Clearer boundaries, stronger voice, less approval-seeking", risk: "Risk: Misusing 'Yes, And' to over-agree", drill: "'Yes, and here is my limit.'", color: "var(--accent4)" },
+  { icon: "🏛️", type: "Leaders", benefit: "Best: Room reading, presence, storytelling, adaptive communication", risk: "Risk: Performing authority instead of embodying it", drill: "Summarize tension calmly in meetings.", color: "var(--accent6)" },
+  { icon: "🔥", type: "Emotionally Intense", benefit: "Best: Modulation, pacing, expression without overwhelm", risk: "Risk: Becoming more dramatic instead of regulated", drill: "Say the same truth at intensity levels 3, 5, and 7.", color: "var(--accent5)" },
+  { icon: "🌟", type: "Socially Confident but Shallow", benefit: "Best: Deeper listening, emotional truth, empathy", risk: "Risk: Using improv to become more entertaining, not connected", drill: "Ask 3 follow-up questions before sharing your own story.", color: "var(--accent2)" }
+];
+
+const skills = [
+  { name: "Presence", emoji: "👁️", color: "var(--accent1)", level: 0 },
+  { name: "Listening", emoji: "👂", color: "var(--accent3)", level: 0 },
+  { name: "Adaptability", emoji: "🌊", color: "var(--accent4)", level: 0 },
+  { name: "Expression", emoji: "❤️", color: "var(--accent5)", level: 0 },
+  { name: "Empathy", emoji: "🤝", color: "var(--accent6)", level: 0 },
+  { name: "Confidence", emoji: "💪", color: "var(--accent2)", level: 0 },
+  { name: "Status", emoji: "👑", color: "var(--accent1)", level: 0 },
+  { name: "Storytelling", emoji: "📖", color: "var(--accent3)", level: 0 }
+];
+
+// ==================== STATE ====================
+let xp = 0, level = 1, streak = 0, done = 0;
+let rfIndex = 0, rfStreak = 0, rfAnswered = 0, rfSkipped = 0, rfActed = 0, rfXP = 0;
+let rfActive = false, rfTimer = null, rfTimeLeft = 30;
+let modalTimer = null, modalTimeLeft = 60;
+let qotdIndex = 0;
+let currentScenario = 0;
+let rfShuffled = [];
+let lastHour = new Date().getHours();
+let comboCount = 0;
+
+// Hour-based seed for shuffling
+function hourSeed() {
+  const h = new Date().getHours();
+  return h * 1000 + new Date().getDate();
+}
+
+function seededShuffle(arr, seed) {
+  const a = [...arr];
+  let s = seed;
+  for (let i = a.length - 1; i > 0; i--) {
+    s = (s * 9301 + 49297) % 233280;
+    const j = Math.floor((s / 233280) * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ==================== AUDIO ====================
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+
+function initAudio() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+}
+
+function playTone(freq, type = 'sine', dur = 0.15, vol = 0.3) {
+  initAudio();
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.connect(g); g.connect(audioCtx.destination);
+  o.frequency.value = freq;
+  o.type = type;
+  g.gain.setValueAtTime(vol, audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+  o.start(); o.stop(audioCtx.currentTime + dur);
+}
+
+function playXPSound() {
+  [440, 554, 659, 880].forEach((f, i) => setTimeout(() => playTone(f, 'sine', 0.12, 0.25), i * 60));
+}
+
+function playLevelUpSound() {
+  [261, 329, 392, 523, 659, 784].forEach((f, i) => setTimeout(() => playTone(f, 'triangle', 0.2, 0.3), i * 80));
+}
+
+function playSuccessSound() {
+  [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => playTone(f, 'sine', 0.15, 0.2), i * 50));
+}
+
+function playActSound() {
+  [220, 330, 440, 550, 660].forEach((f, i) => setTimeout(() => playTone(f, 'sawtooth', 0.1, 0.15), i * 40));
+}
+
+function playSkipSound() { playTone(220, 'square', 0.1, 0.15); }
+
+function playWildcardSound() {
+  for (let i = 0; i < 8; i++) {
+    setTimeout(() => playTone(200 + Math.random() * 600, 'sawtooth', 0.08, 0.2), i * 50);
+  }
+}
+
+function playTimerEndSound() {
+  [880, 440, 220].forEach((f, i) => setTimeout(() => playTone(f, 'square', 0.15, 0.3), i * 100));
+}
+
+// ==================== XP SYSTEM ====================
+function gainXP(amount, label = '') {
+  xp += amount;
+  done++;
+  streak++;
+  comboCount++;
+
+  const lvl = Math.floor(xp / 100) + 1;
+  if (lvl > level) {
+    level = lvl;
+    playLevelUpSound();
+    showAchievement('🆙 Level Up! You\'re now Level ' + level);
+    triggerConfetti();
+  } else {
+    playXPSound();
+  }
+
+  updateXPBar();
+  updateStats();
+  soundVisActive();
+
+  if (comboCount >= 3) {
+    showCombo();
+    comboCount = 0;
+  }
+
+  if (label) showAchievement('✨ +' + amount + ' XP — ' + label);
+}
+
+function updateXPBar() {
+  const pct = (xp % 100);
+  document.getElementById('xp-fill').style.width = pct + '%';
+  document.getElementById('level-display').textContent = level;
+  document.getElementById('streak-display').textContent = streak;
+  document.getElementById('done-display').textContent = done;
+}
+
+function showAchievement(msg) {
+  const el = document.getElementById('achievement-pop');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+function showCombo() {
+  const el = document.getElementById('combo-display');
+  el.textContent = 'COMBO x' + (comboCount + 3) + ' 🔥';
+  el.className = 'show';
+  setTimeout(() => el.className = 'hide', 1000);
+  setTimeout(() => el.className = '', 1400);
+  playTone(880, 'triangle', 0.3, 0.4);
+}
+
+function updateStats() {
+  document.getElementById('rf-answered').textContent = rfAnswered;
+  document.getElementById('rf-skipped').textContent = rfSkipped;
+  document.getElementById('rf-acted').textContent = rfActed;
+  document.getElementById('rf-xp').textContent = rfXP;
+}
+
+// ==================== DARK MODE ====================
+function toggleDark() {
+  const html = document.documentElement;
+  html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
+  playTone(440, 'sine', 0.08);
+}
+
+// ==================== QUOTE OF DAY ====================
+function initQOTD() {
+  const seed = hourSeed();
+  const idx = seed % quotes.length;
+  qotdIndex = idx;
+  renderQOTD();
+}
+
+function renderQOTD() {
+  const q = quotes[qotdIndex];
+  document.getElementById('qotd-text').style.animation = 'none';
+  requestAnimationFrame(() => {
+    document.getElementById('qotd-text').style.animation = 'quoteIn 0.6s cubic-bezier(0.34,1.56,0.64,1)';
+    document.getElementById('qotd-text').textContent = '"' + q.text + '"';
+    document.getElementById('qotd-author').textContent = '— ' + q.author;
+  });
+}
+
+function nextQOTD() {
+  qotdIndex = (qotdIndex + 1) % quotes.length;
+  renderQOTD();
+  playTone(523, 'sine', 0.1);
+  gainXP(2, 'Quote read!');
+}
+
+// ==================== RAPID FIRE ====================
+function initRapidFire() {
+  rfShuffled = seededShuffle(rapidFireQuestions, hourSeed());
+  rfIndex = 0;
+}
+
+function startRapidFire() {
+  rfActive = true;
+  rfIndex = 0;
+  rfShuffled = seededShuffle(rapidFireQuestions, hourSeed() + Math.random() * 100);
+  showRFCard();
+  startRFTimer();
+  playSuccessSound();
+}
+
+function showRFCard() {
+  if (rfIndex >= rfShuffled.length) {
+    endRapidFire();
+    return;
+  }
+  const q = rfShuffled[rfIndex];
+  const stack = document.getElementById('rf-card-stack');
+  stack.innerHTML = '';
+
+  // Show next 3 cards stacked
+  for (let i = Math.min(rfIndex + 2, rfShuffled.length - 1); i >= rfIndex; i--) {
+    const card = document.createElement('div');
+    card.className = 'rf-card' + (i === rfIndex ? ' active' : '');
+    const qi = rfShuffled[i];
+    const offset = (i - rfIndex) * 6;
+    card.style.transform = `translateY(${offset}px) scale(${1 - (i-rfIndex)*0.02})`;
+    card.style.zIndex = 10 - (i - rfIndex);
+    card.innerHTML = `
+      <div class="rf-card-cat" style="background:${qi.color}20;color:${qi.color};">${qi.cat}</div>
+      <div class="rf-card-q">${qi.q}</div>
+      <div class="rf-card-type">${qi.type}</div>
+    `;
+    stack.appendChild(card);
+  }
+
+  // Update streak display
+  document.getElementById('rf-streak').textContent = rfStreak;
+}
+
+function getActiveCard() { return document.querySelector('.rf-card.active'); }
+
+function rfSkip() {
+  if (!rfActive) return;
+  const card = getActiveCard();
+  if (!card) return;
+  card.classList.add('exit-left');
+  rfSkipped++;
+  rfStreak = 0;
+  playSkipSound();
+  setTimeout(() => { rfIndex++; showRFCard(); resetRFTimer(); }, 400);
+}
+
+function rfDone() {
+  if (!rfActive) return;
+  const card = getActiveCard();
+  if (!card) return;
+  card.classList.add('exit-right');
+  rfAnswered++;
+  rfStreak++;
+  rfXP += 10;
+  gainXP(10, 'Rapid Fire!');
+  setTimeout(() => { rfIndex++; showRFCard(); resetRFTimer(); }, 400);
+}
+
+function rfActItOut() {
+  if (!rfActive) return;
+  const q = rfShuffled[rfIndex];
+  if (!q) return;
+  openActModal({
+    title: q.q,
+    desc: 'Act it out! Be bold. Be expressive. Commit fully.',
+    steps: ['Stand up if possible', 'Take a deep breath', 'Go all in — no half measures', 'Own it completely'],
+    time: 45,
+    xp: 25
+  });
+  rfActed++;
+}
+
+function rfNext() {
+  if (!rfActive) { startRapidFire(); return; }
+  const card = getActiveCard();
+  if (!card) return;
+  card.classList.add('exit-up');
+  setTimeout(() => { rfIndex++; showRFCard(); resetRFTimer(); }, 400);
+}
+
+function startRFTimer() {
+  rfTimeLeft = 30;
+  clearInterval(rfTimer);
+  rfTimer = setInterval(() => {
+    rfTimeLeft--;
+    updateRFTimer();
+    if (rfTimeLeft <= 0) {
+      clearInterval(rfTimer);
+      playTimerEndSound();
+      rfSkip();
+    }
+  }, 1000);
+}
+
+function resetRFTimer() {
+  rfTimeLeft = 30;
+  startRFTimer();
+}
+
+function updateRFTimer() {
+  document.getElementById('rf-time-display').textContent = rfTimeLeft;
+  const pct = ((30 - rfTimeLeft) / 30) * 360;
+  document.querySelector('.rf-timer-ring').style.background = 
+    `conic-gradient(var(--accent1) ${pct}deg, var(--card-border) ${pct}deg)`;
+}
+
+function endRapidFire() {
+  rfActive = false;
+  clearInterval(rfTimer);
+  document.getElementById('rf-card-stack').innerHTML = `
+    <div class="rf-card active" style="background:linear-gradient(135deg,var(--accent1),var(--accent5));">
+      <div style="font-size:3rem;margin-bottom:16px;">🏆</div>
+      <div class="rf-card-q" style="color:white;">Round Complete!</div>
+      <div class="rf-card-type" style="color:rgba(255,255,255,0.8);">Answered: ${rfAnswered} | Acted: ${rfActed} | Skipped: ${rfSkipped} | XP: ${rfXP}</div>
+    </div>`;
+  playLevelUpSound();
+  triggerConfetti();
+}
+
+// ==================== QOD ==================== 
+function initQOD() {
+  const grid = document.getElementById('qod-grid');
+  const shuffled = seededShuffle(qodQuestions, hourSeed());
+  grid.innerHTML = shuffled.map((q, i) => `
+    <div class="qod-card" style="animation-delay:${i*0.08}s" onclick="qodReveal(this,${i})">
+      <div class="qod-card-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="qod-card-icon">${q.icon}</div>
+      <div class="qod-card-q">${q.q}</div>
+      <div class="qod-card-context" id="qod-ctx-${i}" style="display:none">${q.context}</div>
+      <div style="margin-top:12px;font-size:0.7rem;color:var(--accent1);font-weight:700;">TAP TO EXPLORE • ACT IT OUT FOR +15 XP</div>
+    </div>
+  `).join('');
+}
+
+function qodReveal(el, i) {
+  const ctx = document.getElementById('qod-ctx-' + i);
+  if (ctx.style.display === 'none') {
+    ctx.style.display = 'block';
+    gainXP(5, 'Question explored!');
+    playTone(659, 'sine', 0.1);
+    el.style.borderColor = 'var(--accent4)';
+  }
+}
+
+function shuffleQOD() {
+  initQOD();
+  playSuccessSound();
+  gainXP(3, 'Deck shuffled!');
+}
+
+// ==================== CHALLENGES ====================
+function initChallenges() {
+  const grid = document.getElementById('challenge-grid');
+  const shuffled = seededShuffle(challenges, hourSeed());
+  grid.innerHTML = shuffled.map(c => `
+    <div class="challenge-card ${c.color}">
+      <div class="badge">${c.badge}</div>
+      <h3>${c.title}</h3>
+      <p>${c.desc}</p>
+      <button class="act-btn" onclick="openChallenge('${c.title}')">🎭 ACT IT OUT (+${c.xp} XP)</button>
+    </div>
+  `).join('');
+}
+
+function openChallenge(title) {
+  const c = challenges.find(ch => ch.title === title);
+  if (!c) return;
+  openActModal(c);
+  playActSound();
+}
+
+// ==================== ACT MODAL ====================
+function openActModal(challenge) {
+  document.getElementById('modal-title').textContent = challenge.title;
+  document.getElementById('modal-desc').textContent = challenge.desc || '';
+  document.getElementById('modal-timer').textContent = challenge.time || 60;
+  modalTimeLeft = challenge.time || 60;
+  clearInterval(modalTimer);
+
+  const steps = document.getElementById('modal-steps');
+  steps.innerHTML = (challenge.steps || []).map((s, i) => `
+    <li><div class="step-num">${i+1}</div><span>${s}</span></li>
+  `).join('');
+
+  // Store xp for completion
+  document.getElementById('act-modal').dataset.xp = challenge.xp || 25;
+  document.getElementById('act-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeActModal() {
+  document.getElementById('act-modal').classList.remove('open');
+  document.body.style.overflow = '';
+  clearInterval(modalTimer);
+}
+
+function startModalTimer() {
+  clearInterval(modalTimer);
+  modalTimer = setInterval(() => {
+    modalTimeLeft--;
+    document.getElementById('modal-timer').textContent = modalTimeLeft;
+    if (modalTimeLeft <= 3) {
+      playTone(440 + (3 - modalTimeLeft) * 100, 'square', 0.1);
+    }
+    if (modalTimeLeft <= 0) {
+      clearInterval(modalTimer);
+      playTimerEndSound();
+      document.getElementById('modal-timer').textContent = '✓';
+    }
+  }, 1000);
+  playTone(523, 'sine', 0.15);
+}
+
+function completeAct() {
+  const xpAmt = parseInt(document.getElementById('act-modal').dataset.xp) || 25;
+  gainXP(xpAmt, 'Act completed! 🎭');
+  rfActed++;
+  rfXP += xpAmt;
+  closeActModal();
+  playLevelUpSound();
+  triggerConfetti();
+  updateStats();
+}
+
+// ==================== SCENARIOS ====================
+function initScenarios() {
+  const deck = document.getElementById('scenario-deck');
+  const nav = document.getElementById('scenario-nav');
+
+  deck.innerHTML = scenarios.map((s, i) => `
+    <div class="scenario-card ${i === 0 ? 'active' : ''}" id="sc-${i}">
+      <div class="scenario-emoji">${s.emoji}</div>
+      <div class="scenario-title">${s.title}</div>
+      <div class="scenario-bad">
+        <div class="scenario-bad-label">✗ BAD RESPONSE</div>
+        <div class="scenario-text">${s.bad}</div>
+      </div>
+      <div class="scenario-good">
+        <div class="scenario-good-label">✓ BETTER RESPONSE</div>
+        <div class="scenario-text">${s.good}</div>
+      </div>
+      <div class="scenario-scripts">
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent3);margin-bottom:8px;">SCRIPTS TO TRY</div>
+        ${s.scripts.map(sc => `<div class="script-item">${sc}</div>`).join('')}
+      </div>
+      <blockquote style="margin-top:16px;">${s.principle}</blockquote>
+      <button class="btn btn-primary" style="margin-top:16px;" onclick="gainXP(15,'Scenario studied!')">✓ Got It! (+15 XP)</button>
+    </div>
+  `).join('');
+
+  nav.innerHTML = scenarios.map((s, i) => `
+    <button onclick="goScenario(${i})" style="padding:8px 16px;border-radius:100px;border:1px solid var(--card-border);background:var(--card-bg);color:var(--text);cursor:pointer;font-size:0.75rem;font-weight:700;transition:all 0.2s;" id="sc-nav-${i}">${s.emoji} ${s.title}</button>
+  `).join('');
+  
+  updateScenarioNav();
+}
+
+function goScenario(i) {
+  document.getElementById(`sc-${currentScenario}`).classList.remove('active');
+  currentScenario = i;
+  document.getElementById(`sc-${currentScenario}`).classList.add('active');
+  updateScenarioNav();
+  playTone(523, 'sine', 0.08);
+}
+
+function nextScenario() { goScenario((currentScenario + 1) % scenarios.length); }
+function prevScenario() { goScenario((currentScenario - 1 + scenarios.length) % scenarios.length); }
+
+function updateScenarioNav() {
+  scenarios.forEach((_, i) => {
+    const btn = document.getElementById('sc-nav-' + i);
+    if (btn) btn.style.background = i === currentScenario ? 'var(--accent1)' : 'var(--card-bg)';
+    if (btn) btn.style.color = i === currentScenario ? 'white' : 'var(--text)';
+  });
+}
+
+// ==================== PERSONALITY ====================
+function initPersonality() {
+  const grid = document.getElementById('personality-grid');
+  grid.innerHTML = personalities.map(p => `
+    <div class="pers-card" onclick="gainXP(8,'Personality explored!')">
+      <div class="pers-icon">${p.icon}</div>
+      <div class="pers-type">${p.type}</div>
+      <div class="pers-benefit">✓ ${p.benefit}</div>
+      <div class="pers-risk">⚠ ${p.risk}</div>
+      <div class="pers-drill">🔥 Drill: ${p.drill}</div>
+    </div>
+  `).join('');
+}
+
+// ==================== SKILLS TRACKER ====================
+function initSkills() {
+  const grid = document.getElementById('progress-grid');
+  grid.innerHTML = skills.map((s, i) => `
+    <div class="progress-skill" onclick="levelSkill(${i})">
+      <div class="ps-name">${s.emoji} ${s.name}</div>
+      <div class="ps-bar"><div class="ps-fill" id="skill-fill-${i}" style="width:0%;background:${s.color}"></div></div>
+      <div class="ps-level" id="skill-level-${i}">Level 0 — Click to train</div>
+    </div>
+  `).join('');
+}
+
+function levelSkill(i) {
+  skills[i].level = Math.min(skills[i].level + 1, 10);
+  const pct = skills[i].level * 10;
+  document.getElementById('skill-fill-' + i).style.width = pct + '%';
+  document.getElementById('skill-level-' + i).textContent = `Level ${skills[i].level} — ${pct}% Mastery`;
+  gainXP(8, skills[i].name + ' leveled up!');
+  playTone(440 + skills[i].level * 40, 'sine', 0.1);
+}
+
+// ==================== WILDCARD ====================
+function triggerWildcard() {
+  const all = [...rapidFireQuestions, ...challenges.map(c => ({q: c.title, cat: c.badge, color: 'var(--accent5)', type: '🎭 CHALLENGE', isAct: true}))];
+  const random = all[Math.floor(Math.random() * all.length)];
+  playWildcardSound();
+  
+  if (random.steps) {
+    openActModal(random);
+  } else {
+    showAchievement('🎲 WILDCARD: ' + random.q.substring(0, 50) + '...');
+    gainXP(5, 'Wildcard!');
+  }
+  triggerSmallConfetti();
+}
+
+// ==================== CONFETTI ====================
+function triggerConfetti() {
+  const colors = ['#ff4d1c','#ffd60a','#0057ff','#00c896','#ff2d8b','#8b5cf6'];
+  for (let i = 0; i < 60; i++) {
+    setTimeout(() => {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = Math.random() * 100 + 'vw';
+      piece.style.top = '-20px';
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+      piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+      piece.style.animationDuration = (2 + Math.random() * 2) + 's';
+      piece.style.animationDelay = Math.random() * 0.5 + 's';
+      document.body.appendChild(piece);
+      setTimeout(() => piece.remove(), 4000);
+    }, i * 30);
+  }
+}
+
+function triggerSmallConfetti() {
+  const colors = ['#ff4d1c','#ffd60a','#ff2d8b'];
+  for (let i = 0; i < 15; i++) {
+    setTimeout(() => {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = Math.random() * 100 + 'vw';
+      piece.style.top = '-10px';
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.width = '6px'; piece.style.height = '8px';
+      piece.style.animationDuration = (1.5 + Math.random()) + 's';
+      document.body.appendChild(piece);
+      setTimeout(() => piece.remove(), 3000);
+    }, i * 50);
+  }
+}
+
+// ==================== SOUND VIS ====================
+function soundVisActive() {
+  const vis = document.getElementById('sound-vis');
+  vis.classList.add('active');
+  setTimeout(() => vis.classList.remove('active'), 1500);
+}
+
+// ==================== CURSOR ====================
+const cursor = document.getElementById('cursor');
+const cursorDot = document.getElementById('cursor-dot');
+let cx = 0, cy = 0, tx = 0, ty = 0;
+
+document.addEventListener('mousemove', e => {
+  tx = e.clientX; ty = e.clientY;
+  cursorDot.style.left = tx + 'px';
+  cursorDot.style.top = ty + 'px';
+});
+
+function animateCursor() {
+  cx += (tx - cx) * 0.15;
+  cy += (ty - cy) * 0.15;
+  cursor.style.left = cx + 'px';
+  cursor.style.top = cy + 'px';
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+document.querySelectorAll('button, a, .qod-card, .challenge-card, .progress-skill, .pers-card, .principle-card').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+});
+
+// ==================== PARTICLES ====================
+const canvas = document.getElementById('particle-canvas');
+const ctx2d = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function createParticle() {
+  return {
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    vx: (Math.random() - 0.5) * 0.5,
+    vy: (Math.random() - 0.5) * 0.5,
+    size: Math.random() * 3 + 1,
+    opacity: Math.random() * 0.5 + 0.1,
+    color: ['#ff4d1c','#ffd60a','#0057ff','#00c896','#ff2d8b'][Math.floor(Math.random()*5)]
+  };
+}
+
+for (let i = 0; i < 50; i++) particles.push(createParticle());
+
+function animateParticles() {
+  ctx2d.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+    ctx2d.beginPath();
+    ctx2d.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx2d.fillStyle = p.color;
+    ctx2d.globalAlpha = p.opacity;
+    ctx2d.fill();
+  });
+  ctx2d.globalAlpha = 1;
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ==================== SCROLL REVEAL ====================
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ==================== ACCORDION ====================
+function toggleAccordion(header) {
+  const acc = header.parentElement;
+  const wasOpen = acc.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.accordion.open').forEach(a => a.classList.remove('open'));
+  if (!wasOpen) {
+    acc.classList.add('open');
+    gainXP(3, 'Section opened!');
+    playTone(523, 'sine', 0.06);
+  }
+}
+
+// ==================== PARALLAX ====================
+window.addEventListener('scroll', () => {
+  const scrollY = window.scrollY;
+  const heroBg = document.querySelector('.hero-bg-text');
+  if (heroBg) heroBg.style.transform = `translateY(calc(-50% + ${scrollY * 0.3}px))`;
+});
+
+// ==================== HOUR-BASED VARIATION ====================
+function checkHourChange() {
+  const h = new Date().getHours();
+  if (h !== lastHour) {
+    lastHour = h;
+    initQOD();
+    initChallenges();
+    initRapidFire();
+  }
+  setTimeout(checkHourChange, 60000);
+}
+
+// ==================== TODAY HIGHLIGHT ====================
+function highlightToday() {
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const today = days[new Date().getDay()];
+  document.querySelectorAll('.day-card').forEach(d => {
+    if (d.querySelector('.day-name').textContent === today) {
+      d.classList.add('today');
+    }
+  });
+}
+
+// ==================== LOADER ====================
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const loader = document.getElementById('loader');
+    loader.style.opacity = '0';
+    setTimeout(() => loader.style.display = 'none', 600);
+    // Init everything
+    initQOTD();
+    initRapidFire();
+    initQOD();
+    initChallenges();
+    initScenarios();
+    initPersonality();
+    initSkills();
+    checkHourChange();
+    highlightToday();
+    // Re-observe newly added reveal elements
+    setTimeout(() => {
+      document.querySelectorAll('.reveal:not(.visible)').forEach(el => revealObserver.observe(el));
+    }, 100);
+  }, 1800);
+});
+
+// Click anywhere for micro XP
+let clickCount = 0;
+document.addEventListener('click', (e) => {
+  if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A') {
+    clickCount++;
+    if (clickCount % 10 === 0) {
+      gainXP(1, 'Exploration bonus!');
+    }
+  }
+  // Ripple
+  const ripple = document.createElement('div');
+  ripple.style.cssText = `position:fixed;left:${e.clientX}px;top:${e.clientY}px;width:20px;height:20px;border-radius:50%;border:2px solid var(--accent1);pointer-events:none;z-index:9999;transform:translate(-50%,-50%);animation:rippleAnim 0.6s ease forwards;`;
+  document.body.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 600);
+});
+
+// Add ripple keyframe
+const styleEl = document.createElement('style');
+styleEl.textContent = '@keyframes rippleAnim{0%{transform:translate(-50%,-50%) scale(0);opacity:1;}100%{transform:translate(-50%,-50%) scale(4);opacity:0;}}';
+document.head.appendChild(styleEl);
+</script>
+</body>
+</html>

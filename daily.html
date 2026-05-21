@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="Your daily improv challenge — quote of the day, question of the day, daily focus, and streak tracking.">
+<title>DAILY — Improv Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* DAILY PAGE */
+.daily-hero {
+  padding: 80px 32px 40px;
+  max-width: 900px; margin: 0 auto;
+  text-align: center;
+}
+.daily-hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(64px, 12vw, 128px);
+  line-height: 1; letter-spacing: 2px;
+  background: linear-gradient(135deg, var(--a1), var(--a2), var(--a3));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+}
+.daily-hero-sub {
+  font-size: 1rem; color: var(--text2); max-width: 500px; margin: 0 auto 32px; line-height: 1.6;
+}
+
+/* DATE BAR */
+.date-bar {
+  display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap;
+  padding: 16px 32px; background: var(--bg2);
+  border-top: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+}
+.date-badge {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.8rem; font-weight: 700; color: var(--text2);
+}
+.date-sep { width: 4px; height: 4px; border-radius: 50%; background: var(--card-border); }
+
+/* STREAK CARD */
+.streak-display {
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+  background: linear-gradient(135deg, var(--a1), var(--a2));
+  border-radius: 28px; padding: 28px 40px;
+  color: white; position: relative; overflow: hidden;
+  margin-bottom: 16px;
+}
+.streak-display::before {
+  content: '🔥'; font-size: 200px; position: absolute;
+  right: -40px; top: -60px; opacity: 0.08; line-height: 1;
+}
+.streak-number {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(64px, 10vw, 96px); line-height: 1;
+}
+.streak-info { text-align: left; }
+.streak-label { font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; opacity: 0.8; margin-bottom: 4px; }
+.streak-note  { font-size: 0.9rem; opacity: 0.9; line-height: 1.4; max-width: 200px; }
+
+/* QUOTE CARD */
+.quote-card {
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  border-radius: 32px; padding: 56px 52px;
+  text-align: center; position: relative; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+  transition: all 0.3s;
+}
+.quote-card::before {
+  content: '\201C';
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20rem; position: absolute;
+  top: -60px; left: 16px; line-height: 1;
+  color: var(--a1); opacity: 0.06;
+}
+.quote-text {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: clamp(20px, 3vw, 30px); font-weight: 800;
+  line-height: 1.4; color: var(--text);
+  position: relative; z-index: 1;
+  margin-bottom: 24px;
+}
+.quote-author {
+  font-size: 0.8rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--a1); position: relative; z-index: 1;
+}
+.quote-source {
+  font-size: 0.75rem; color: var(--text3);
+  position: relative; z-index: 1; margin-top: 4px;
+}
+
+/* HOUR QUOTE */
+.hour-quote-card {
+  background: linear-gradient(135deg, rgba(0,87,255,0.08), rgba(124,0,255,0.06));
+  border: 1.5px solid rgba(0,87,255,0.2);
+  border-radius: 20px; padding: 28px 30px;
+  position: relative; overflow: hidden;
+}
+.hour-quote-label {
+  font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 3px; color: var(--a3); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.hour-dot {
+  display: inline-block; width: 8px; height: 8px;
+  border-radius: 50%; background: var(--a3);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.5;transform:scale(1.3);} }
+.hour-quote-text {
+  font-size: 1.05rem; font-weight: 700; line-height: 1.5; color: var(--text);
+  font-style: italic; margin-bottom: 8px;
+}
+.hour-quote-author { font-size: 0.78rem; color: var(--text3); }
+
+/* QOTD / Reflect card */
+.reflect-card {
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  border-radius: 28px; padding: 44px 40px;
+  box-shadow: 0 16px 50px rgba(0,0,0,0.06);
+  transition: all 0.3s;
+}
+.reflect-icon  { font-size: 3.5rem; margin-bottom: 16px; }
+.reflect-cat {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px; border-radius: 9999px;
+  font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+.reflect-q {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: clamp(18px, 2.8vw, 28px); font-weight: 800;
+  line-height: 1.4; color: var(--text); margin-bottom: 24px;
+}
+.reflect-done-btn {
+  width: 100%; padding: 16px 24px;
+  border-radius: 14px; cursor: pointer;
+  font-weight: 700; font-size: 0.9rem;
+  text-transform: uppercase; letter-spacing: 1px;
+  border: 2px solid var(--a4); background: transparent; color: var(--a4);
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.reflect-done-btn:hover { background: var(--a4); color: white; transform: translateY(-3px); }
+.reflect-done-btn.done  { background: var(--a4); color: white; cursor: default; }
+
+/* DAILY CHALLENGE */
+.challenge-card {
+  background: linear-gradient(135deg, var(--a2), var(--a7));
+  border-radius: 28px; padding: 48px 44px; color: white;
+  position: relative; overflow: hidden;
+}
+.challenge-card::before {
+  content: ''; position: absolute;
+  width: 300px; height: 300px; border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  top: -100px; right: -100px;
+}
+.challenge-label {
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 3px; opacity: 0.8; margin-bottom: 16px;
+}
+.challenge-day   { font-family: 'Bebas Neue', sans-serif; font-size: clamp(48px,8vw,80px); line-height: 1; margin-bottom: 6px; }
+.challenge-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: clamp(22px,3vw,34px); font-weight: 800; line-height: 1.3; margin-bottom: 16px; }
+.challenge-focus { font-size: 1rem; opacity: 0.9; line-height: 1.6; max-width: 520px; }
+
+/* 30-DAY MINIMAP */
+.plan-grid {
+  display: grid; grid-template-columns: repeat(7,1fr); gap: 6px;
+  margin-top: 16px;
+}
+.plan-day-dot {
+  aspect-ratio: 1; border-radius: 8px;
+  background: var(--card-border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem; font-weight: 700; color: var(--text3);
+  cursor: default;
+  position: relative;
+}
+.plan-day-dot.today {
+  background: var(--a1); color: white;
+  box-shadow: 0 4px 16px var(--g1);
+}
+.plan-day-dot.past { background: var(--a4); color: white; }
+
+/* PAGE SECTIONS */
+.daily-section {
+  max-width: 900px; margin: 0 auto;
+  padding: 0 32px 60px;
+}
+.section-divider {
+  height: 1px; background: var(--card-border);
+  margin: 0 32px 48px;
+}
+
+/* Quote cycling control */
+.quote-cycle-controls {
+  display: flex; gap: 12px; justify-content: center; align-items: center;
+  margin-top: 20px;
+}
+.quote-cycle-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1.5px solid var(--card-border); background: var(--card-bg);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 1rem;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+.quote-cycle-btn:hover { transform: scale(1.15); border-color: var(--a1); color: var(--a1); }
+.quote-idx-display { font-size: 0.75rem; color: var(--text3); font-weight: 600; }
+
+/* HISTORY (last 7 quotes reflected) */
+.history-card {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 18px; padding: 20px 22px;
+  margin-bottom: 10px;
+  font-size: 0.88rem; color: var(--text2); line-height: 1.5;
+}
+.history-meta { font-size: 0.68rem; color: var(--text3); margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-dot"></div>
+<canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+<nav role="navigation" aria-label="Main navigation">
+  <a href="index.html" class="nav-logo">IMPROV⚡QUEST</a>
+  <div class="nav-links">
+    <a href="index.html"   class="nav-link">Home</a>
+    <a href="explore.html" class="nav-link">Explore</a>
+    <a href="play.html"    class="nav-link">Play</a>
+    <a href="daily.html"   class="nav-link active" aria-current="page">Daily</a>
+  </div>
+  <div class="nav-controls">
+    <button id="sound-toggle" class="nav-icon-btn" title="Toggle sound" aria-label="Toggle sound">🔊</button>
+    <button id="dark-toggle"  class="nav-icon-btn" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
+  </div>
+</nav>
+
+<div id="xp-bar-container" role="status">
+  <span class="xp-label">Level <span id="xp-level">1</span></span>
+  <div id="xp-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"><div id="xp-fill"></div></div>
+  <div class="xp-stats">
+    <span class="xp-stat">XP <span id="xp-total">0</span></span>
+    <span class="xp-stat">🔥 <span id="xp-streak">0</span></span>
+  </div>
+</div>
+
+<div id="achievement-pop" role="alert" aria-live="polite"></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<main class="page-body">
+
+<!-- HERO -->
+<div class="daily-hero" data-reveal>
+  <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--text3);margin-bottom:12px;">Your Daily Practice</div>
+  <h1>TODAY</h1>
+  <p class="daily-hero-sub">One quote. One question. One challenge. A new perspective every day.</p>
+</div>
+
+<!-- DATE BAR -->
+<div class="date-bar" id="date-bar">
+  <div class="date-badge">📅 <span id="today-full-date">Loading...</span></div>
+  <div class="date-sep"></div>
+  <div class="date-badge">🕐 <span id="today-time">Loading...</span></div>
+  <div class="date-sep"></div>
+  <div class="date-badge">⚡ Quotes shuffle every <strong>hour</strong> · Questions shuffle every <strong>day</strong></div>
+</div>
+
+<!-- STREAK SECTION -->
+<div class="daily-section" style="padding-top:48px;" data-reveal>
+  <div class="section-label" style="margin-bottom:16px;">Your Streak</div>
+  <div class="streak-display" id="streak-display">
+    <div class="streak-number" id="streak-num">0</div>
+    <div class="streak-info">
+      <div class="streak-label">Day Streak</div>
+      <div class="streak-note" id="streak-note">Visit every day to build your streak!</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+    <div class="stat-card"><div class="stat-num" id="stat-total-visits">0</div><div class="stat-label">Total Visits</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-xp">0</div><div class="stat-label">XP Earned</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-reflected">0</div><div class="stat-label">Reflections</div></div>
+  </div>
+</div>
+<div class="section-divider"></div>
+
+<!-- QUOTE OF THE DAY -->
+<div class="daily-section" data-reveal>
+  <div class="section-label" style="margin-bottom:6px;">Quote of the Day</div>
+  <p style="font-size:0.85rem;color:var(--text3);margin-bottom:24px;">Changes every day. Based on today's date.</p>
+
+  <div class="quote-card" id="qotd-card" data-tilt>
+    <div class="quote-text" id="qotd-text">Loading...</div>
+    <div class="quote-author" id="qotd-author">—</div>
+    <div class="quote-source" id="qotd-source"></div>
+  </div>
+  <div class="quote-cycle-controls">
+    <button class="quote-cycle-btn" id="quote-prev" title="Previous quote" aria-label="Previous quote">←</button>
+    <span class="quote-idx-display" id="quote-idx-disp">1 / 25</span>
+    <button class="quote-cycle-btn" id="quote-next" title="Next quote" aria-label="Next quote">→</button>
+  </div>
+</div>
+<div class="section-divider"></div>
+
+<!-- QUOTE OF THE HOUR -->
+<div class="daily-section" data-reveal>
+  <div class="section-label" style="margin-bottom:6px;">Quote of the Hour</div>
+  <p style="font-size:0.85rem;color:var(--text3);margin-bottom:20px;">Refreshes every 60 minutes. Come back for a new one.</p>
+  <div class="hour-quote-card">
+    <div class="hour-quote-label"><span class="hour-dot"></span> Live · Refreshes next hour</div>
+    <div class="hour-quote-text" id="hour-quote-text">Loading...</div>
+    <div class="hour-quote-author" id="hour-quote-author">—</div>
+  </div>
+</div>
+<div class="section-divider"></div>
+
+<!-- QUESTION OF THE DAY -->
+<div class="daily-section" data-reveal>
+  <div class="section-label" style="margin-bottom:6px;">Question of the Day</div>
+  <p style="font-size:0.85rem;color:var(--text3);margin-bottom:24px;">A reflective question to sit with today. Changes every day.</p>
+  <div class="reflect-card" id="qotd-reflect-card">
+    <div class="reflect-icon" id="reflect-icon">🤔</div>
+    <div class="reflect-cat badge-blue" id="reflect-cat">—</div>
+    <div class="reflect-q" id="reflect-q">Loading...</div>
+    <button class="reflect-done-btn" id="reflect-done-btn" onclick="markReflected()">
+      <span id="reflect-btn-icon">💡</span>
+      <span id="reflect-btn-text">I've reflected on this</span>
+    </button>
+  </div>
+  <p style="font-size:0.78rem;color:var(--text3);margin-top:12px;text-align:center;">
+    Tap above when you've genuinely considered the question. Earns <strong>+10 XP</strong>.
+  </p>
+</div>
+<div class="section-divider"></div>
+
+<!-- DAILY CHALLENGE (from weekly template) -->
+<div class="daily-section" data-reveal>
+  <div class="section-label" style="margin-bottom:6px;">Today's Challenge</div>
+  <p style="font-size:0.85rem;color:var(--text3);margin-bottom:24px;">Based on today's day of week from the weekly practice template.</p>
+  <div class="challenge-card" id="challenge-card">
+    <div class="challenge-label">Today's Focus</div>
+    <div class="challenge-day" id="challenge-day">MON</div>
+    <div class="challenge-title" id="challenge-title">Loading...</div>
+    <div class="challenge-focus" id="challenge-focus">Loading...</div>
+  </div>
+</div>
+<div class="section-divider"></div>
+
+<!-- 30-DAY PLAN PROGRESS -->
+<div class="daily-section" data-reveal>
+  <div class="section-label" style="margin-bottom:6px;">30-Day Plan</div>
+  <p style="font-size:0.85rem;color:var(--text3);margin-bottom:20px;">Track where you are in the 30-day journey. Visiting counts as progress!</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;">
+    <div id="week-display" style="background:var(--card-bg);border:2px solid var(--card-border);border-radius:20px;padding:24px;text-align:center;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:4rem;color:var(--a1);line-height:1;" id="plan-week-num">W1</div>
+      <div style="font-weight:800;font-size:0.95rem;margin-bottom:8px;" id="plan-week-title">—</div>
+      <div style="font-size:0.85rem;color:var(--text2);line-height:1.5;" id="plan-week-focus">—</div>
+    </div>
+    <div style="flex:1;">
+      <p style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text3);margin-bottom:12px;">Daily Practices This Week</p>
+      <ul style="padding-left:18px;list-style:none;" id="plan-week-daily"></ul>
+    </div>
+  </div>
+  <div class="plan-grid" id="plan-grid" role="list" aria-label="30-day progress grid"></div>
+</div>
+<div class="section-divider"></div>
+
+<!-- PRINCIPLES OF THE DAY -->
+<div class="daily-section" data-reveal>
+  <div class="section-label" style="margin-bottom:6px;">Principle of the Day</div>
+  <p style="font-size:0.85rem;color:var(--text3);margin-bottom:20px;">One principle to embody today. Changes every day.</p>
+  <div class="card" id="principle-card" style="padding:44px;text-align:center;" data-tilt>
+    <div style="font-size:4rem;margin-bottom:14px;" id="principle-icon">⚡</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,5vw,56px);color:var(--a1);margin-bottom:12px;" id="principle-title">—</div>
+    <p style="font-size:1rem;color:var(--text2);line-height:1.6;max-width:480px;margin:0 auto;" id="principle-body">—</p>
+  </div>
+</div>
+<div class="section-divider"></div>
+
+<!-- RECENT REFLECTIONS (history) -->
+<div class="daily-section" data-reveal>
+  <div class="section-label" style="margin-bottom:6px;">Recent Reflections</div>
+  <p style="font-size:0.85rem;color:var(--text3);margin-bottom:20px;">Questions you've reflected on.</p>
+  <div id="reflection-history">
+    <p style="color:var(--text3);font-size:0.9rem;font-style:italic;">No reflections yet. Start today.</p>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <p><strong>IMPROV QUEST</strong> — Daily Practice · Build the habit, earn the streak, become the player</p>
+</footer>
+
+<script src="js/content.js"></script>
+<script src="js/engine.js"></script>
+<script>
+/* ── DATE / TIME UTILS ─────────────────────────────────────── */
+const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS_SHORT = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+
+function getNow() { return new Date(); }
+function getDayOfYear(d) {
+  const start = new Date(d.getFullYear(), 0, 0);
+  return Math.floor((d - start) / 86400000);
+}
+function formatTime(d) {
+  let h = d.getHours(), m = d.getMinutes();
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return `${h}:${String(m).padStart(2,'0')} ${ampm}`;
+}
+
+/* ── CLOCK ─────────────────────────────────────────────────── */
+function updateClock() {
+  const now = getNow();
+  document.getElementById('today-full-date').textContent = `${DAYS[now.getDay()]}, ${MONTHS[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+  document.getElementById('today-time').textContent = formatTime(now);
+}
+setInterval(updateClock, 1000);
+
+/* ── QUOTE OF DAY ──────────────────────────────────────────── */
+let quoteOffset = 0;
+
+function getDailyQuote(offset) {
+  const now = getNow();
+  const seed = now.getFullYear() * 1000 + getDayOfYear(now) + offset;
+  const idx  = Engine.shuffle([...Array(C.quotes.length).keys()], seed)[0];
+  return C.quotes[idx % C.quotes.length];
+}
+
+function renderDailyQuote() {
+  const q = getDailyQuote(quoteOffset);
+  document.getElementById('qotd-text').textContent   = q.text;
+  document.getElementById('qotd-author').textContent = q.source ? '— ' + q.source : '';
+  document.getElementById('qotd-source').textContent = '';
+  document.getElementById('quote-idx-disp').textContent = (quoteOffset + 1) + ' / ' + C.quotes.length;
+}
+
+/* ── QUOTE OF HOUR ─────────────────────────────────────────── */
+function renderHourQuote() {
+  const q = Engine.getHourlyItem(C.quotes);
+  document.getElementById('hour-quote-text').textContent   = q.text;
+  document.getElementById('hour-quote-author').textContent = q.source ? '— ' + q.source : '';
+}
+
+/* ── QOTD REFLECT ──────────────────────────────────────────── */
+function getDailyQuestion() {
+  const now = getNow();
+  const seed = now.getFullYear() * 1000 + getDayOfYear(now) + 99999;
+  const idx  = Engine.shuffle([...Array(C.questionOfDay.length).keys()], seed)[0];
+  return C.questionOfDay[idx % C.questionOfDay.length];
+}
+
+function renderReflectCard() {
+  const today  = getNow().toDateString();
+  const qItem  = getDailyQuestion();
+  document.getElementById('reflect-q').textContent = qItem.q;
+
+  const catEl = document.getElementById('reflect-cat');
+  catEl.textContent = qItem.category;
+  const catColors = {
+    'Self-Awareness':  'badge-purple',
+    'Listening':       'badge-green',
+    'Social Dynamics': 'badge-blue',
+    'Identity':        'badge-pink',
+    'Communication':   'badge-blue',
+    'Creativity':      'badge-yellow',
+    'Courage':         'badge-red',
+    'Presence':        'badge-blue',
+    'Practice':        'badge-green',
+    'Relationship':    'badge-pink'
+  };
+  catEl.className = 'reflect-cat ' + (catColors[qItem.category] || 'badge-blue');
+
+  const icons = {
+    'Self-Awareness': '🪞','Listening': '👂','Social Dynamics': '🤝',
+    'Identity': '🎭','Communication': '💬','Creativity': '💡',
+    'Courage': '🦁','Presence': '🎯','Practice': '🔁','Relationship': '❤️'
+  };
+  document.getElementById('reflect-icon').textContent = icons[qItem.category] || '🤔';
+
+  // Check if already reflected today
+  const history = getReflectionHistory();
+  const todayDone = history.some(h => h.date === today);
+  if (todayDone) markReflectedUI(true, qItem);
+}
+
+function markReflected() {
+  const today = getNow().toDateString();
+  const qItem = getDailyQuestion();
+  const history = getReflectionHistory();
+  if (history.some(h => h.date === today)) return;
+
+  history.unshift({ date: today, q: qItem.q, category: qItem.category });
+  if (history.length > 30) history.pop();
+  localStorage.setItem('iq_reflect_history', JSON.stringify(history));
+
+  const reflected = parseInt(localStorage.getItem('iq_reflected_count') || '0') + 1;
+  localStorage.setItem('iq_reflected_count', reflected);
+  document.getElementById('stat-reflected').textContent = reflected;
+
+  Engine.xp.add(10, 'Daily reflection');
+  Engine.Sound.success();
+  Engine.achievements.unlock('deep_diver');
+  if (reflected >= 7)  Engine.achievements.unlock('week_warrior');
+  if (reflected >= 30) Engine.achievements.unlock('iron_will');
+
+  markReflectedUI(false, qItem);
+  renderReflectionHistory();
+}
+
+function markReflectedUI(alreadyDone, qItem) {
+  const btn = document.getElementById('reflect-done-btn');
+  btn.classList.add('done');
+  document.getElementById('reflect-btn-icon').textContent = '✅';
+  document.getElementById('reflect-btn-text').textContent = alreadyDone ? 'Reflected today ✓' : 'Reflected — nice!';
+  btn.onclick = null;
+}
+
+function getReflectionHistory() {
+  try { return JSON.parse(localStorage.getItem('iq_reflect_history') || '[]'); }
+  catch { return []; }
+}
+
+function renderReflectionHistory() {
+  const history = getReflectionHistory();
+  const el = document.getElementById('reflection-history');
+  if (history.length === 0) { el.innerHTML = '<p style="color:var(--text3);font-size:0.9rem;font-style:italic;">No reflections yet. Start today.</p>'; return; }
+  el.innerHTML = history.slice(0, 7).map(h => `
+    <div class="history-card">
+      <div>${h.q}</div>
+      <div class="history-meta">${h.category} · ${h.date}</div>
+    </div>`).join('');
+}
+
+/* ── DAILY CHALLENGE ───────────────────────────────────────── */
+function renderDailyChallenge() {
+  const now = getNow();
+  const dow = now.getDay(); // 0=Sun
+  const dayMap = [6,0,1,2,3,4,5]; // 0=Mon in array
+  const idx = dayMap[dow] % C.weeklyTemplate.length;
+  const d = C.weeklyTemplate[idx];
+  document.getElementById('challenge-day').textContent   = DAYS_SHORT[dow];
+  document.getElementById('challenge-title').textContent = d.title;
+  document.getElementById('challenge-focus').textContent = d.focus;
+}
+
+/* ── 30-DAY PLAN ───────────────────────────────────────────── */
+function renderPlanProgress() {
+  const now  = getNow();
+  const doy  = getDayOfYear(now) % 30; // cycle through 30 days
+  const weekNum = Math.floor(doy / 7);
+  const week  = C.thirtyDayPlan[Math.min(weekNum, C.thirtyDayPlan.length - 1)];
+  const visits = parseInt(localStorage.getItem('iq_total_visits') || '0');
+
+  document.getElementById('plan-week-num').textContent   = 'W' + (weekNum + 1);
+  document.getElementById('plan-week-title').textContent = week.title;
+  document.getElementById('plan-week-focus').textContent = 'Focus: ' + week.focus;
+
+  const dailyEl = document.getElementById('plan-week-daily');
+  dailyEl.innerHTML = week.daily.map(d =>
+    `<li style="font-size:0.85rem;color:var(--text2);margin-bottom:8px;display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--a4);flex-shrink:0;">•</span>${d}</li>`
+  ).join('');
+
+  // Grid
+  const grid = document.getElementById('plan-grid');
+  grid.innerHTML = '';
+  for (let i = 0; i < 30; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'plan-day-dot';
+    dot.setAttribute('role', 'listitem');
+    dot.setAttribute('aria-label', `Day ${i+1}`);
+    dot.textContent = i + 1;
+    if (i === doy) dot.classList.add('today');
+    else if (i < doy && i < visits) dot.classList.add('past');
+    grid.appendChild(dot);
+  }
+}
+
+/* ── PRINCIPLE OF DAY ──────────────────────────────────────── */
+function renderPrincipleOfDay() {
+  const p = Engine.getDailyItem(C.principles);
+  document.getElementById('principle-icon').textContent  = p.icon;
+  document.getElementById('principle-title').textContent = p.title;
+  document.getElementById('principle-body').textContent  = p.body;
+}
+
+/* ── STREAK DISPLAY ────────────────────────────────────────── */
+function renderStreak() {
+  const streak = Engine.streak.get();
+  document.getElementById('streak-num').textContent = streak;
+  document.getElementById('xp-streak').textContent  = streak;
+  const notes = ['Visit every day to build your streak!', 'You\'re on a roll!', 'Keep going — don\'t break the chain!', 'Impressive commitment! 🔥', 'UNSTOPPABLE. Don\'t stop now!'];
+  document.getElementById('streak-note').textContent = streak >= 30 ? notes[4] : streak >= 14 ? notes[3] : streak >= 7 ? notes[2] : streak >= 2 ? notes[1] : notes[0];
+}
+
+/* ── STATS ─────────────────────────────────────────────────── */
+function updateStats() {
+  const visits    = parseInt(localStorage.getItem('iq_total_visits') || '0') + 1;
+  localStorage.setItem('iq_total_visits', visits);
+  document.getElementById('stat-total-visits').textContent = visits;
+  document.getElementById('stat-xp').textContent = Engine.xp.total();
+  document.getElementById('stat-reflected').textContent = localStorage.getItem('iq_reflected_count') || '0';
+}
+
+/* ── INIT ──────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  Engine.init();
+  updateClock();
+
+  renderDailyQuote();
+  renderHourQuote();
+  renderReflectCard();
+  renderDailyChallenge();
+  renderPlanProgress();
+  renderPrincipleOfDay();
+  renderStreak();
+  updateStats();
+  renderReflectionHistory();
+
+  // Quote cycling
+  document.getElementById('quote-prev').addEventListener('click', () => {
+    quoteOffset = (quoteOffset - 1 + C.quotes.length) % C.quotes.length;
+    renderDailyQuote();
+    Engine.Sound.swipe();
+  });
+  document.getElementById('quote-next').addEventListener('click', () => {
+    quoteOffset = (quoteOffset + 1) % C.quotes.length;
+    renderDailyQuote();
+    Engine.Sound.swipe();
+  });
+
+  // Daily XP visit bonus
+  const lastVisit = localStorage.getItem('iq_last_xp_day');
+  const today     = getNow().toDateString();
+  if (lastVisit !== today) {
+    localStorage.setItem('iq_last_xp_day', today);
+    Engine.xp.add(Engine.XP_CONFIG.dailyVisit, 'Daily visit');
+    document.getElementById('stat-xp').textContent = Engine.xp.total();
+  }
+});
+</script>
+</body>
+</html>
